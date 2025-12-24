@@ -22,7 +22,7 @@ export default function Navbar() {
                 letterSpacing: '0.5px',
               }}
             >
-              RideWay
+              BusGo
             </Box>
           </Box>
 

@@ -71,14 +71,14 @@ export default function Footer() {
             <Typography variant="h6" sx={{ color: 'white', fontWeight: 600, mb: 2 }}>
               CONTACT US
             </Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              RideWay Travels (Pvt) Ltd
+            <Typography variant="body2" sx={{ mb: 2 }}>
+               Mihiranga Entreprises (PVT) LTD
             </Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              123 Galle Road, Colombo 03, Sri Lanka
+              Halthota, Horana
             </Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              Hotline: +94 11 2345678
+              Hotline: +94 34 2252600
             </Typography>
             <Typography variant="body2" sx={{ mb: 2 }}>
               Support: info@rideway.lk
@@ -99,7 +99,7 @@ export default function Footer() {
 
         <Box sx={{ borderTop: '1px solid #2d3748', mt: 4, pt: 3, textAlign: 'center' }}>
           <Typography variant="body2" color="inherit">
-            © {new Date().getFullYear()} RideWay. All rights reserved.
+            © {new Date().getFullYear()} BusGo. All rights reserved.
           </Typography>
         </Box>
       </Container>

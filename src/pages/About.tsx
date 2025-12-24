@@ -5,11 +5,11 @@ export default function About() {
     <Box sx={{ mt: 10, py: 6, minHeight: '80vh' }}>
       <Container maxWidth="lg">
         <Typography variant="h3" sx={{ fontWeight: 700, mb: 4 }}>
-          About RideWay
+          About BusGo
         </Typography>
         <Paper sx={{ p: 4 }}>
           <Typography variant="body1" paragraph>
-            RideWay is Sri Lanka's leading bus booking platform, connecting travelers across the island
+            BusGo is Sri Lanka's leading bus booking platform, connecting travelers across the island
             with reliable and comfortable bus services.
           </Typography>
           <Typography variant="body1" paragraph>

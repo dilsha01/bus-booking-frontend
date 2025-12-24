@@ -183,7 +183,7 @@ export default function Home() {
       <Box sx={{ py: 10, backgroundColor: 'background.default' }}>
         <Container maxWidth="lg">
           <Typography variant="h3" sx={{ textAlign: 'center', mb: 6, fontWeight: 700 }}>
-            Why Choose RideWay?
+            Why Choose BusGo?
           </Typography>
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
