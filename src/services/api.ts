@@ -106,6 +106,7 @@ export type DashboardStats = {
   totalBuses: number;
   totalTrips: number;
   totalBookings: number;
+  totalUsers: number;
   revenue: number;
   bookingsByStatus: Array<{ status: string; count: number }>;
   recentBookings: Booking[];

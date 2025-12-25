@@ -18,6 +18,7 @@ import {
   DirectionsBus,
   Route,
   BookOnline,
+  People,
   ExitToApp,
   Menu as MenuIcon,
 } from '@mui/icons-material';
@@ -30,6 +31,7 @@ const menuItems = [
   { text: 'Manage Buses', icon: <DirectionsBus />, path: '/admin/buses' },
   { text: 'Manage Trips', icon: <Route />, path: '/admin/trips' },
   { text: 'View Bookings', icon: <BookOnline />, path: '/admin/bookings' },
+  { text: 'Manage Users', icon: <People />, path: '/admin/users' },
 ];
 
 export default function AdminLayout() {

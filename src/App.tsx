@@ -20,6 +20,7 @@ const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 const ManageBuses = lazy(() => import('./pages/admin/ManageBuses'));
 const ManageTrips = lazy(() => import('./pages/admin/ManageTrips'));
 const ViewBookings = lazy(() => import('./pages/admin/ViewBookings'));
+const ManageUsers = lazy(() => import('./pages/admin/ManageUsers'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -61,6 +62,7 @@ function App() {
               <Route path="buses" element={<ManageBuses />} />
               <Route path="trips" element={<ManageTrips />} />
               <Route path="bookings" element={<ViewBookings />} />
+              <Route path="users" element={<ManageUsers />} />
             </Route>
           </Routes>
         </Suspense>

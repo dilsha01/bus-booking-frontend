@@ -20,6 +20,7 @@ import {
   Route,
   BookOnline,
   AttachMoney,
+  People,
 } from '@mui/icons-material';
 import { adminService } from '../../services/api';
 import type { DashboardStats } from '../../services/api';
@@ -77,6 +78,12 @@ export default function AdminDashboard() {
       color: '#4caf50',
     },
     {
+      title: 'Total Users',
+      value: stats.totalUsers,
+      icon: <People sx={{ fontSize: 40 }} />,
+      color: '#2196f3',
+    },
+    {
       title: 'Revenue (LKR)',
       value: parseFloat(stats.revenue.toString()).toFixed(2),
       icon: <AttachMoney sx={{ fontSize: 40 }} />,
@@ -108,7 +115,7 @@ export default function AdminDashboard() {
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {statCards.map((card, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+          <Grid item xs={12} sm={6} md={2.4} key={index}>
             <Card
               sx={{
                 height: '100%',
