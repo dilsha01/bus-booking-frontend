@@ -102,7 +102,7 @@ export default function Signup() {
               }}
             >
               <Typography variant="h3" sx={{ fontWeight: 700, mb: 2 }}>
-                Join BusGo Today
+                Join RideWay Today
               </Typography>
               <Typography variant="body1" sx={{ opacity: 0.9, mb: 3 }}>
                 Create your account and start booking bus tickets with ease.

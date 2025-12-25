@@ -87,11 +87,11 @@ export default function Login() {
               }}
             >
               <Typography variant="h3" sx={{ fontWeight: 700, mb: 2 }}>
-                Welcome back to BusGo
+                Welcome back to RideWay
               </Typography>
               <Typography variant="body1" sx={{ opacity: 0.9, mb: 3 }}>
                 Manage your bookings, view trip details, and enjoy a smoother
-                travel experience with your BusGo account.
+                travel experience with your RideWay account.
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
                 Secure login with modern encryption. Your data is always safe

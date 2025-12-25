@@ -26,7 +26,7 @@ export default function About() {
                 backgroundClip: 'text',
               }}
             >
-              About BusGo
+              About RideWay
             </Typography>
             <Typography 
               variant="h6" 
@@ -51,7 +51,7 @@ export default function About() {
               }}
             >
               <Typography variant="body1" paragraph sx={{ lineHeight: 1.8 }}>
-                BusGo is Sri Lanka's leading bus booking platform, connecting
+                RideWay is Sri Lanka's leading bus booking platform, connecting
                 travelers across the island with reliable and comfortable bus
                 services.
               </Typography>
@@ -100,7 +100,7 @@ export default function About() {
                     15,000+
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                    Happy travelers who trusted BusGo for their journeys.
+                    Happy travelers who trusted RideWay for their journeys.
                   </Typography>
                 </Paper>
               </Grid>

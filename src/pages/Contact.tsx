@@ -113,7 +113,7 @@ export default function Contact() {
                     Email
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                info@busgo.lk
+                info@rideway.lk
               </Typography>
                 </Box>
               </Box>

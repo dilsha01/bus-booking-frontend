@@ -68,7 +68,7 @@ export default function Navbar() {
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <DirectionsBusIcon sx={{ fontSize: 32 }} />
-          <Box sx={{ fontWeight: 700, fontSize: '1.5rem' }}>BusGo</Box>
+          <Box sx={{ fontWeight: 700, fontSize: '1.5rem' }}>RideWay</Box>
         </Box>
         <IconButton 
           onClick={toggleMobile}
@@ -214,7 +214,7 @@ export default function Navbar() {
                     },
                   }}
                 >
-                  BusGo
+                  RideWay
                 </Box>
               </Box>
 

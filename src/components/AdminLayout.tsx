@@ -46,7 +46,7 @@ export default function AdminLayout() {
     <Box>
       <Toolbar sx={{ backgroundColor: 'primary.main' }}>
         <Typography variant="h6" sx={{ fontWeight: 700, color: 'white' }}>
-          BusGo Admin
+          RideWay Admin
         </Typography>
       </Toolbar>
       <Divider />

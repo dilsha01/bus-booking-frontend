@@ -66,7 +66,7 @@ export default function Footer() {
                   mb: 0.5,
                 }}
               >
-                BusGo
+                RideWay
               </Typography>
               <Typography variant="body2" sx={{ color: '#94a3b8', maxWidth: 280 }}>
                 Seamless intercity bus bookings across Sri Lanka.
@@ -315,7 +315,7 @@ export default function Footer() {
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
-            BusGo  Entreprises (PVT) LTD
+            RideWay Enterprises (PVT) LTD
           </Typography>
               <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
                 Halthota, Horana
@@ -324,7 +324,7 @@ export default function Footer() {
                 Hotline: +94 34 2252600
               </Typography>
               <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
-            Support: info@busgo.lk
+            Support: info@rideway.lk
           </Typography>
             </Box>
             <Box sx={{ display: 'flex', gap: 1.5, mt: 3 }}>
@@ -393,7 +393,7 @@ export default function Footer() {
           }}
         >
           <Typography variant="body2" color="inherit">
-            © {new Date().getFullYear()} BusGo. All rights reserved.
+            © {new Date().getFullYear()} RideWay. All rights reserved.
           </Typography>
         </Box>
       </Container>
