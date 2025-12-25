@@ -1,0 +1,11 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="rideway-gradient" x1="8" y1="56" x2="56" y2="8" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0070F3"/>
+      <stop offset="0.5" stop-color="#4F46E5"/>
+      <stop offset="1" stop-color="#EC4899"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#rideway-gradient)"/>
+  <path d="M22 44L28.5 32.5H24V20H36C40.4183 20 44 23.5817 44 28C44 31.8212 41.5097 35.0184 37.921 35.8151L42 44H36.5L32.5 36H30.5L27 44H22Z" fill="white"/>
+</svg>
