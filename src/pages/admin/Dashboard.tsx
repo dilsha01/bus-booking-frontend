@@ -34,10 +34,12 @@ export default function AdminDashboard() {
 
   const loadStats = async () => {
     try {
+      setLoading(true);
       const response = await adminService.getStats();
-      setStats(response.data);
-    } catch (error) {
+      setStats(response.data || null);
+    } catch (error: any) {
       console.error('Failed to load dashboard stats:', error);
+      setStats(null);
     } finally {
       setLoading(false);
     }
@@ -97,8 +99,11 @@ export default function AdminDashboard() {
 
   return (
     <Box>
-      <Typography variant="h4" sx={{ fontWeight: 700, mb: 4 }}>
+      <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
         Dashboard
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+        Quick overview of buses, trips, bookings and revenue.
       </Typography>
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -132,7 +137,7 @@ export default function AdminDashboard() {
       <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
         Recent Bookings
       </Typography>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ mt: 1 }}>
         <Table>
           <TableHead>
             <TableRow>

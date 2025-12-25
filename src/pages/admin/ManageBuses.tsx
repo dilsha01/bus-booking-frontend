@@ -39,10 +39,12 @@ export default function ManageBuses() {
 
   const loadBuses = async () => {
     try {
+      setLoading(true);
       const response = await busService.getAll();
-      setBuses(response.data);
-    } catch (error) {
+      setBuses(response.data || []);
+    } catch (error: any) {
       console.error('Failed to load buses:', error);
+      setBuses([]);
     } finally {
       setLoading(false);
     }
@@ -77,8 +79,9 @@ export default function ManageBuses() {
       }
       handleCloseDialog();
       loadBuses();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save bus:', error);
+      alert(error.response?.data?.message || 'Failed to save bus');
     }
   };
 
@@ -87,8 +90,9 @@ export default function ManageBuses() {
       try {
         await busService.delete(id);
         loadBuses();
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to delete bus:', error);
+        alert(error.response?.data?.message || 'Failed to delete bus');
       }
     }
   };

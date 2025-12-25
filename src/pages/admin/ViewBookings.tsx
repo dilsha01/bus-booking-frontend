@@ -37,10 +37,12 @@ export default function ViewBookings() {
 
   const loadBookings = async () => {
     try {
+      setLoading(true);
       const response = await bookingService.getAll();
-      setBookings(response.data);
-    } catch (error) {
+      setBookings(response.data || []);
+    } catch (error: any) {
       console.error('Failed to load bookings:', error);
+      setBookings([]);
     } finally {
       setLoading(false);
     }
@@ -63,8 +65,9 @@ export default function ViewBookings() {
       await bookingService.update(editingBooking.id, { status: newStatus as any });
       handleCloseDialog();
       loadBookings();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update booking:', error);
+      alert(error.response?.data?.message || 'Failed to update booking');
     }
   };
 
@@ -73,8 +76,9 @@ export default function ViewBookings() {
       try {
         await bookingService.delete(id);
         loadBookings();
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to delete booking:', error);
+        alert(error.response?.data?.message || 'Failed to delete booking');
       }
     }
   };

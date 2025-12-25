@@ -1,24 +1,73 @@
 import { Container, Typography, Box, Paper, TextField, Button, Grid } from '@mui/material';
-import { Email, Phone, LocationOn } from '@mui/icons-material';
+import { Email, Phone, LocationOn, Send } from '@mui/icons-material';
 
 export default function Contact() {
   return (
-    <Box sx={{ mt: 10, py: 6, minHeight: '80vh', backgroundColor: 'background.default' }}>
+    <Box
+      sx={{
+        mt: 8,
+        pt: 6,
+        pb: 10,
+        minHeight: '80vh',
+        backgroundColor: 'background.default',
+      }}
+    >
       <Container maxWidth="lg">
-        <Typography variant="h3" sx={{ fontWeight: 700, mb: 4 }}>
-          Contact Us
-        </Typography>
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Typography 
+            variant="h3" 
+            sx={{ 
+              fontWeight: 700, 
+              mb: 2,
+              background: 'linear-gradient(135deg, #1a4d7a 0%, #0ea5e9 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            Contact Us
+          </Typography>
+          <Typography 
+            variant="body1" 
+            color="text.secondary" 
+            sx={{ maxWidth: 600, mx: 'auto', fontSize: '1.1rem' }}
+          >
+            Have a question about your booking or want to partner with us?
+            We're here to help.
+          </Typography>
+        </Box>
 
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 4 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+            <Paper 
+              elevation={3}
+              sx={{ 
+                p: 4,
+                borderRadius: 3,
+                height: '100%',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  boxShadow: 8,
+                },
+              }}
+            >
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 4 }}>
                 Get in Touch
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                <LocationOn color="primary" />
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 3, p: 2, borderRadius: 2, backgroundColor: 'action.hover' }}>
+                <Box sx={{ 
+                  p: 1.5, 
+                  borderRadius: '50%', 
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <LocationOn />
+                </Box>
                 <Box>
-                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5 }}>
                     Address
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -26,10 +75,20 @@ export default function Contact() {
                   </Typography>
                 </Box>
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                <Phone color="primary" />
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 3, p: 2, borderRadius: 2, backgroundColor: 'action.hover' }}>
+                <Box sx={{ 
+                  p: 1.5, 
+                  borderRadius: '50%', 
+                  backgroundColor: 'success.main',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <Phone />
+                </Box>
                 <Box>
-                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5 }}>
                     Phone
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -37,10 +96,20 @@ export default function Contact() {
                   </Typography>
                 </Box>
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Email color="primary" />
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, p: 2, borderRadius: 2, backgroundColor: 'action.hover' }}>
+                <Box sx={{ 
+                  p: 1.5, 
+                  borderRadius: '50%', 
+                  backgroundColor: 'secondary.main',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <Email />
+                </Box>
                 <Box>
-                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5 }}>
                     Email
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -52,25 +121,75 @@ export default function Contact() {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 4 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+            <Paper 
+              elevation={3}
+              sx={{ 
+                p: 4,
+                borderRadius: 3,
+                height: '100%',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  boxShadow: 8,
+                },
+              }}
+            >
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 4 }}>
                 Send us a Message
               </Typography>
-              <Grid container spacing={2}>
+              <Grid container spacing={3}>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Name" />
+                  <TextField 
+                    fullWidth 
+                    label="Name" 
+                    required
+                    variant="outlined"
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Email" type="email" />
+                  <TextField 
+                    fullWidth 
+                    label="Email" 
+                    type="email" 
+                    required
+                    variant="outlined"
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Subject" />
+                  <TextField 
+                    fullWidth 
+                    label="Subject" 
+                    required
+                    variant="outlined"
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField fullWidth label="Message" multiline rows={4} />
+                  <TextField 
+                    fullWidth 
+                    label="Message" 
+                    multiline 
+                    rows={5} 
+                    required
+                    variant="outlined"
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                  <Button variant="contained" size="large" fullWidth>
+                  <Button 
+                    variant="contained" 
+                    size="large" 
+                    fullWidth
+                    endIcon={<Send />}
+                    sx={{
+                      py: 1.5,
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      boxShadow: 3,
+                      '&:hover': {
+                        boxShadow: 6,
+                        transform: 'translateY(-2px)',
+                      },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
                     Send Message
                   </Button>
                 </Grid>

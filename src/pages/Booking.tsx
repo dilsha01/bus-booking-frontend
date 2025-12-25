@@ -40,17 +40,25 @@ export default function Booking() {
   }, [tripId]);
 
   const loadTrip = async () => {
+    if (!tripId) {
+      setError('Invalid trip ID');
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      const response = await tripService.getAll();
-      const foundTrip = response.data.find((t) => t.id === Number(tripId));
-      if (foundTrip) {
-        setTrip(foundTrip);
+      const response = await tripService.getById(Number(tripId));
+      if (response.data) {
+        setTrip(response.data);
+        setError('');
       } else {
         setError('Trip not found');
       }
-    } catch (err) {
-      setError('Failed to load trip details');
+    } catch (err: any) {
+      console.error('Failed to load trip:', err);
+      const errorMessage = err.response?.data?.message || 'Failed to load trip details';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -63,15 +71,20 @@ export default function Booking() {
     try {
       setSubmitting(true);
       setError('');
-      await bookingService.create({
+      const response = await bookingService.create({
         userId: formData.userId,
         tripId: trip.id,
         seats: formData.seats,
       });
-      setSuccess(true);
-      setTimeout(() => navigate('/'), 3000);
+      
+      if (response.data) {
+        setSuccess(true);
+        setTimeout(() => navigate('/'), 3000);
+      }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create booking');
+      console.error('Failed to create booking:', err);
+      const errorMessage = err.response?.data?.message || 'Failed to create booking';
+      setError(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -202,11 +215,22 @@ export default function Booking() {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 3, position: 'sticky', top: 100 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+            <Paper 
+              elevation={3}
+              sx={{ 
+                p: 3.5, 
+                position: 'sticky', 
+                top: 100,
+                borderRadius: 3,
+                border: '2px solid',
+                borderColor: 'primary.light',
+                background: 'linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%)',
+              }}
+            >
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: 'primary.main' }}>
                 Trip Summary
               </Typography>
-              <Divider sx={{ mb: 2 }} />
+              <Divider sx={{ mb: 3 }} />
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <DirectionsBus color="primary" />

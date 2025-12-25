@@ -46,10 +46,12 @@ export default function ManageTrips() {
 
   const loadTrips = async () => {
     try {
+      setLoading(true);
       const response = await tripService.getAll();
-      setTrips(response.data);
-    } catch (error) {
+      setTrips(response.data || []);
+    } catch (error: any) {
       console.error('Failed to load trips:', error);
+      setTrips([]);
     } finally {
       setLoading(false);
     }
@@ -58,9 +60,10 @@ export default function ManageTrips() {
   const loadBuses = async () => {
     try {
       const response = await busService.getAll();
-      setBuses(response.data);
-    } catch (error) {
+      setBuses(response.data || []);
+    } catch (error: any) {
       console.error('Failed to load buses:', error);
+      setBuses([]);
     }
   };
 
@@ -99,8 +102,8 @@ export default function ManageTrips() {
       const data = {
         ...formData,
         busId: parseInt(formData.busId),
-        price: formData.price,
       };
+      
       if (editingTrip) {
         await tripService.update(editingTrip.id, data);
       } else {
@@ -108,8 +111,9 @@ export default function ManageTrips() {
       }
       handleCloseDialog();
       loadTrips();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save trip:', error);
+      alert(error.response?.data?.message || 'Failed to save trip');
     }
   };
 
@@ -118,8 +122,9 @@ export default function ManageTrips() {
       try {
         await tripService.delete(id);
         loadTrips();
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to delete trip:', error);
+        alert(error.response?.data?.message || 'Failed to delete trip');
       }
     }
   };

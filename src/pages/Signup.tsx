@@ -1,42 +1,58 @@
 import { Container, Typography, Box, Paper, TextField, Button, Grid, InputAdornment, IconButton, Alert } from '@mui/material';
-import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material';
+import { Visibility, VisibilityOff, PersonAdd } from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService, getErrorMessage } from '../services/api';
 
-export default function Login() {
+export default function Signup() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [field]: e.target.value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
-    if (!email || !password) {
-      setError('Please enter both email and password');
+    // Validation
+    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
     try {
       setLoading(true);
-      const response = await authService.login(email, password);
+      const response = await authService.register(formData.name, formData.email, formData.password);
       
       // Store token and user info
       localStorage.setItem('authToken', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       
-      // Redirect based on role
-      if (response.data.user.role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
+      // Redirect to home page
+      navigate('/');
     } catch (err: any) {
-      console.error('Login failed:', err);
+      console.error('Signup failed:', err);
       setError(getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -61,7 +77,7 @@ export default function Login() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.2), transparent 50%)',
+          background: 'radial-gradient(circle at 70% 50%, rgba(59, 130, 246, 0.2), transparent 50%)',
         },
       }}
     >
@@ -80,16 +96,26 @@ export default function Login() {
               }}
             >
               <Typography variant="h3" sx={{ fontWeight: 700, mb: 2 }}>
-                Welcome back to BusGo
+                Join BusGo Today
               </Typography>
               <Typography variant="body1" sx={{ opacity: 0.9, mb: 3 }}>
-                Manage your bookings, view trip details, and enjoy a smoother
-                travel experience with your BusGo account.
+                Create your account and start booking bus tickets with ease.
+                Enjoy exclusive benefits and a seamless travel experience.
               </Typography>
-              <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                Secure login with modern encryption. Your data is always safe
-                with us.
-              </Typography>
+              <Box component="ul" sx={{ opacity: 0.8, pl: 2 }}>
+                <Typography component="li" variant="body2" sx={{ mb: 1 }}>
+                  ✓ Quick and easy booking process
+                </Typography>
+                <Typography component="li" variant="body2" sx={{ mb: 1 }}>
+                  ✓ View and manage all your bookings
+                </Typography>
+                <Typography component="li" variant="body2" sx={{ mb: 1 }}>
+                  ✓ Get exclusive offers and discounts
+                </Typography>
+                <Typography component="li" variant="body2">
+                  ✓ Secure payment options
+                </Typography>
+              </Box>
             </Box>
           </Grid>
 
@@ -109,14 +135,14 @@ export default function Login() {
                 variant="h4"
                 sx={{ fontWeight: 700, mb: 1, textAlign: 'center' }}
               >
-                Login
+                Create Account
               </Typography>
               <Typography
                 variant="body2"
                 color="text.secondary"
                 sx={{ mb: 4, textAlign: 'center' }}
               >
-                Enter your credentials to access your account
+                Fill in your details to get started
               </Typography>
               
               {error && (
@@ -128,12 +154,22 @@ export default function Login() {
               <form onSubmit={handleSubmit}>
                 <TextField 
                   fullWidth 
+                  label="Full Name" 
+                  type="text" 
+                  required
+                  variant="outlined"
+                  value={formData.name}
+                  onChange={handleChange('name')}
+                  sx={{ mb: 3 }} 
+                />
+                <TextField 
+                  fullWidth 
                   label="Email" 
                   type="email" 
                   required
                   variant="outlined"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formData.email}
+                  onChange={handleChange('email')}
                   sx={{ mb: 3 }} 
                 />
                 <TextField
@@ -142,9 +178,10 @@ export default function Login() {
                   type={showPassword ? 'text' : 'password'}
                   required
                   variant="outlined"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  sx={{ mb: 2 }}
+                  value={formData.password}
+                  onChange={handleChange('password')}
+                  sx={{ mb: 3 }}
+                  helperText="Must be at least 6 characters"
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -159,25 +196,36 @@ export default function Login() {
                     ),
                   }}
                 />
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
-                  <Button 
-                    variant="text" 
-                    size="small"
-                    sx={{ 
-                      textTransform: 'none',
-                      '&:hover': { color: 'primary.dark' },
-                    }}
-                  >
-                    Forgot password?
-                  </Button>
-                </Box>
+                <TextField
+                  fullWidth
+                  label="Confirm Password"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  required
+                  variant="outlined"
+                  value={formData.confirmPassword}
+                  onChange={handleChange('confirmPassword')}
+                  sx={{ mb: 3 }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          edge="end"
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
                 <Button 
                   type="submit"
                   variant="contained" 
                   size="large" 
                   fullWidth 
                   disabled={loading}
-                  endIcon={<LoginIcon />}
+                  endIcon={<PersonAdd />}
                   sx={{ 
                     mb: 3,
                     py: 1.5,
@@ -191,14 +239,15 @@ export default function Login() {
                     transition: 'all 0.3s ease',
                   }}
                 >
-                  {loading ? 'Logging in...' : 'Login'}
+                  {loading ? 'Creating Account...' : 'Sign Up'}
                 </Button>
               </form>
+              
               <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                Don't have an account?{' '}
+                Already have an account?{' '}
                 <Button 
                   component={Link}
-                  to="/signup"
+                  to="/login"
                   variant="text" 
                   size="small"
                   sx={{ 
@@ -206,7 +255,7 @@ export default function Login() {
                     textTransform: 'none',
                   }}
                 >
-                  Sign Up
+                  Login
                 </Button>
               </Typography>
             </Paper>

@@ -32,23 +32,17 @@ export default function Trips() {
   const loadTrips = async () => {
     try {
       setLoading(true);
-      const response = await tripService.getAll();
-      let filtered = response.data;
-
-      if (from) {
-        filtered = filtered.filter((trip) =>
-          trip.origin.toLowerCase().includes(from.toLowerCase())
-        );
-      }
-      if (to) {
-        filtered = filtered.filter((trip) =>
-          trip.destination.toLowerCase().includes(to.toLowerCase())
-        );
-      }
-
-      setTrips(filtered);
-    } catch (error) {
+      // Use API query parameters for filtering
+      const response = await tripService.getAll({
+        origin: from || undefined,
+        destination: to || undefined,
+        date: date || undefined,
+      });
+      
+      setTrips(response.data || []);
+    } catch (error: any) {
       console.error('Failed to load trips:', error);
+      setTrips([]);
     } finally {
       setLoading(false);
     }
@@ -70,14 +64,24 @@ export default function Trips() {
   };
 
   return (
-    <Box sx={{ mt: 10, py: 6, minHeight: '80vh', backgroundColor: 'background.default' }}>
+    <Box sx={{ mt: 8, pt: 6, pb: 10, minHeight: '80vh', backgroundColor: 'background.default' }}>
       <Container maxWidth="lg">
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+        <Box sx={{ mb: 5 }}>
+          <Typography 
+            variant="h3" 
+            sx={{ 
+              fontWeight: 700, 
+              mb: 2,
+              background: 'linear-gradient(135deg, #1a4d7a 0%, #0ea5e9 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
             Available Journeys
           </Typography>
           {(from || to) && (
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 500 }}>
               {from && to ? `${from} → ${to}` : from || to}
               {date && ` on ${formatDate(date)}`}
             </Typography>
@@ -108,15 +112,21 @@ export default function Trips() {
             {trips.map((trip) => (
               <Grid item xs={12} key={trip.id}>
                 <Card
+                  elevation={2}
                   sx={{
+                    borderRadius: 3,
+                    overflow: 'hidden',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    transition: 'all 0.3s ease',
                     '&:hover': {
-                      boxShadow: 6,
-                      transform: 'translateY(-2px)',
-                      transition: 'all 0.3s',
+                      boxShadow: 8,
+                      transform: 'translateY(-4px)',
+                      borderColor: 'primary.main',
                     },
                   }}
                 >
-                  <CardContent>
+                  <CardContent sx={{ p: 3 }}>
                     <Grid container spacing={2} alignItems="center">
                       <Grid item xs={12} md={3}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
