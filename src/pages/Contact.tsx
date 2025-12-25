@@ -71,7 +71,7 @@ export default function Contact() {
                     Address
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    123 Galle Road, Colombo 03, Sri Lanka
+                    Halthota, Horana
                   </Typography>
                 </Box>
               </Box>
@@ -92,7 +92,7 @@ export default function Contact() {
                     Phone
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    +94 11 2345678
+                    +94 34 2252600
                   </Typography>
                 </Box>
               </Box>
@@ -113,8 +113,8 @@ export default function Contact() {
                     Email
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    info@rideway.lk
-                  </Typography>
+                info@busgo.lk
+              </Typography>
                 </Box>
               </Box>
             </Paper>

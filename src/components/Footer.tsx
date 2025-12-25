@@ -315,8 +315,8 @@ export default function Footer() {
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
-                Mihiranga Entreprises (PVT) LTD
-              </Typography>
+            BusGo  Entreprises (PVT) LTD
+          </Typography>
               <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
                 Halthota, Horana
               </Typography>
@@ -324,8 +324,8 @@ export default function Footer() {
                 Hotline: +94 34 2252600
               </Typography>
               <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
-                Support: info@rideway.lk
-              </Typography>
+            Support: info@busgo.lk
+          </Typography>
             </Box>
             <Box sx={{ display: 'flex', gap: 1.5, mt: 3 }}>
               <IconButton 
