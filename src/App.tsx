@@ -15,6 +15,7 @@ const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Login = lazy(() => import('./pages/Login'));
 const Signup = lazy(() => import('./pages/Signup'));
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 const ManageBuses = lazy(() => import('./pages/admin/ManageBuses'));
 const ManageTrips = lazy(() => import('./pages/admin/ManageTrips'));
@@ -51,6 +52,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
             </Route>
 
             {/* Admin routes */}

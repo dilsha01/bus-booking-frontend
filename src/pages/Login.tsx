@@ -11,6 +11,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +38,13 @@ export default function Login() {
       }
     } catch (err: any) {
       console.error('Login failed:', err);
-      setError(getErrorMessage(err));
+      const errorMessage = getErrorMessage(err);
+      setError(errorMessage);
+      
+      // Check if error is due to unverified email
+      if (err.response?.data?.requiresVerification) {
+        setNeedsVerification(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -122,6 +129,11 @@ export default function Login() {
               {error && (
                 <Alert severity="error" sx={{ mb: 3 }}>
                   {error}
+                  {needsVerification && (
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      Please check your email for the verification link.
+                    </Typography>
+                  )}
                 </Alert>
               )}
 

@@ -16,6 +16,8 @@ export default function Signup() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: e.target.value });
@@ -45,15 +47,19 @@ export default function Signup() {
       setLoading(true);
       const response = await authService.register(formData.name, formData.email, formData.password);
       
-      // Store token and user info
-      localStorage.setItem('authToken', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      
-      // Redirect to home page
-      navigate('/');
+      // Show success message - no auto-login
+      setRegistrationSuccess(true);
+      setUserEmail(formData.email);
     } catch (err: any) {
       console.error('Signup failed:', err);
-      setError(getErrorMessage(err));
+      const errorMsg = getErrorMessage(err);
+      
+      // Add helpful message for duplicate email
+      if (errorMsg.toLowerCase().includes('already exists')) {
+        setError(`${errorMsg}. Already have an account? `);
+      } else {
+        setError(errorMsg);
+      }
     } finally {
       setLoading(false);
     }
@@ -148,100 +154,119 @@ export default function Signup() {
               {error && (
                 <Alert severity="error" sx={{ mb: 3 }}>
                   {error}
+                  {error.toLowerCase().includes('already exists') && (
+                    <Link to="/login" style={{ color: 'inherit', fontWeight: 600, textDecoration: 'underline' }}>
+                      Login here
+                    </Link>
+                  )}
                 </Alert>
               )}
 
-              <form onSubmit={handleSubmit}>
-                <TextField 
-                  fullWidth 
-                  label="Full Name" 
-                  type="text" 
-                  required
-                  variant="outlined"
-                  value={formData.name}
-                  onChange={handleChange('name')}
-                  sx={{ mb: 3 }} 
-                />
-                <TextField 
-                  fullWidth 
-                  label="Email" 
-                  type="email" 
-                  required
-                  variant="outlined"
-                  value={formData.email}
-                  onChange={handleChange('email')}
-                  sx={{ mb: 3 }} 
-                />
-                <TextField
-                  fullWidth
-                  label="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  variant="outlined"
-                  value={formData.password}
-                  onChange={handleChange('password')}
-                  sx={{ mb: 3 }}
-                  helperText="Must be at least 6 characters"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <TextField
-                  fullWidth
-                  label="Confirm Password"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  required
-                  variant="outlined"
-                  value={formData.confirmPassword}
-                  onChange={handleChange('confirmPassword')}
-                  sx={{ mb: 3 }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          edge="end"
-                        >
-                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <Button 
-                  type="submit"
-                  variant="contained" 
-                  size="large" 
-                  fullWidth 
-                  disabled={loading}
-                  endIcon={<PersonAdd />}
-                  sx={{ 
-                    mb: 3,
-                    py: 1.5,
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    boxShadow: 3,
-                    '&:hover': {
-                      boxShadow: 6,
-                      transform: 'translateY(-2px)',
-                    },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  {loading ? 'Creating Account...' : 'Sign Up'}
-                </Button>
-              </form>
+              {registrationSuccess && (
+                <Alert severity="success" sx={{ mb: 3 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+                    Registration Successful!
+                  </Typography>
+                  <Typography variant="body2">
+                    We've sent a verification email to <strong>{userEmail}</strong>. 
+                    Please check your inbox and click the verification link to activate your account.
+                  </Typography>
+                </Alert>
+              )}
+
+              {!registrationSuccess && (
+                <form onSubmit={handleSubmit}>
+                  <TextField 
+                    fullWidth 
+                    label="Full Name" 
+                    type="text" 
+                    required
+                    variant="outlined"
+                    value={formData.name}
+                    onChange={handleChange('name')}
+                    sx={{ mb: 3 }} 
+                  />
+                  <TextField 
+                    fullWidth 
+                    label="Email" 
+                    type="email" 
+                    required
+                    variant="outlined"
+                    value={formData.email}
+                    onChange={handleChange('email')}
+                    sx={{ mb: 3 }} 
+                  />
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    variant="outlined"
+                    value={formData.password}
+                    onChange={handleChange('password')}
+                    sx={{ mb: 3 }}
+                    helperText="Must be at least 6 characters"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Confirm Password"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    required
+                    variant="outlined"
+                    value={formData.confirmPassword}
+                    onChange={handleChange('confirmPassword')}
+                    sx={{ mb: 3 }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            edge="end"
+                          >
+                            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <Button 
+                    type="submit"
+                    variant="contained" 
+                    size="large" 
+                    fullWidth 
+                    disabled={loading}
+                    endIcon={<PersonAdd />}
+                    sx={{ 
+                      mb: 3,
+                      py: 1.5,
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      boxShadow: 3,
+                      '&:hover': {
+                        boxShadow: 6,
+                        transform: 'translateY(-2px)',
+                      },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    {loading ? 'Creating Account...' : 'Sign Up'}
+                  </Button>
+                </form>
+              )}
               
               <Typography variant="body2" sx={{ textAlign: 'center' }}>
                 Already have an account?{' '}
