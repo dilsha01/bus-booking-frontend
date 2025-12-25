@@ -4,6 +4,7 @@ import {
   Container,
   Typography,
   TextField,
+  InputAdornment,
   Button,
   Paper,
   MenuItem,
@@ -11,7 +12,6 @@ import {
 } from '@mui/material';
 import {
   CalendarMonth,
-  KeyboardArrowDown,
   LocationOn,
   Search,
   SwapHoriz,
@@ -93,14 +93,16 @@ export default function Home() {
 
           {/* Search Card */}
           <Paper
-            elevation={6}
+            elevation={0}
             sx={{
               px: { xs: 2.5, md: 4 },
               py: { xs: 2.5, md: 3 },
               // Use a softer radius on mobile so it doesn't look like a circle
-              borderRadius: { xs: 4, sm: 6, md: 9999 },
-              backgroundColor: '#ffffff',
-              boxShadow: '0 22px 55px rgba(15, 23, 42, 0.6)',
+              borderRadius: { xs: 4, sm: 6, md: 6 },
+              backgroundColor: 'linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4))',
+              border: '1px solid',
+              borderColor: 'divider',
+              boxShadow: { xs: 3, md: 6 },
               maxWidth: 1040,
               mx: 'auto',
             }}
@@ -114,144 +116,127 @@ export default function Home() {
               }}
             >
               <Grid
-                item
                 xs={12}
                 md={4}
                 sx={{
-                  borderRight: { md: '1px solid rgba(148, 163, 184, 0.3)' },
+                  borderRight: { md: 1 },
+                  borderColor: 'divider',
                   pr: { md: 2.5 },
                 }}
               >
-                <Typography
-                  variant="caption"
-                  sx={{ fontWeight: 600, color: 'text.secondary', mb: 0.5, display: 'block' }}
+                <TextField
+                  select
+                  fullWidth
+                  label="From"
+                  value={searchParams.from}
+                  onChange={(e) =>
+                    setSearchParams({ ...searchParams, from: e.target.value })
+                  }
+                  variant="outlined"
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LocationOn fontSize="small" color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  SelectProps={{
+                    displayEmpty: true,
+                    renderValue: (selected) => {
+                      if (!selected) {
+                        return (
+                          <Typography component="span" color="text.secondary">
+                            Select city
+                          </Typography>
+                        );
+                      }
+                      return Array.isArray(selected)
+                        ? selected.join(', ')
+                        : String(selected);
+                    },
+                  }}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontWeight: 600,
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      height: 56,
+                      borderRadius: { xs: 3, md: 9999 },
+                      backgroundColor: 'background.default',
+                    },
+                  }}
                 >
-                  From
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 52,
-                      height: 44,
-                      borderRadius: '9999px',
-                      border: '1px solid rgba(148, 163, 184, 0.4)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      color: 'primary.main',
-                      backgroundColor: '#f9fafb',
-                      px: 1,
-                    }}
-                  >
-                    <LocationOn fontSize="small" />
-                    <KeyboardArrowDown fontSize="small" />
-                  </Box>
-                  <TextField
-                    select
-                    fullWidth
-                    value={searchParams.from}
-                    onChange={(e) =>
-                      setSearchParams({ ...searchParams, from: e.target.value })
-                    }
-                    placeholder="Leaving from"
-                    variant="standard"
-                    InputProps={{ disableUnderline: true }}
-                    SelectProps={{
-                      displayEmpty: true,
-                      renderValue: (selected) => {
-                        if (!selected) {
-                          return <span style={{ color: '#9ca3af' }}>Select city</span>;
-                        }
-                        return selected;
-                      },
-                    }}
-                    sx={{
-                      '& .MuiSelect-select': {
-                        py: 1.2,
-                        fontSize: '0.95rem',
-                      },
-                    }}
-                  >
-                    {cities.map((city) => (
-                      <MenuItem key={city} value={city}>
-                        {city}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Box>
+                  {cities.map((city) => (
+                    <MenuItem key={city} value={city}>
+                      {city}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
 
               <Grid
-                item
                 xs={12}
                 md={4}
                 sx={{
-                  borderRight: { md: '1px solid rgba(148, 163, 184, 0.3)' },
+                  borderRight: { md: 1 },
+                  borderColor: 'divider',
                   px: { md: 2.5 },
                   mt: { xs: 1.5, md: 0 },
                 }}
               >
-                <Typography
-                  variant="caption"
-                  sx={{ fontWeight: 600, color: 'text.secondary', mb: 0.5, display: 'block' }}
+                <TextField
+                  select
+                  fullWidth
+                  label="To"
+                  value={searchParams.to}
+                  onChange={(e) =>
+                    setSearchParams({ ...searchParams, to: e.target.value })
+                  }
+                  variant="outlined"
+                  InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SwapHoriz fontSize="small" color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  SelectProps={{
+                    displayEmpty: true,
+                    renderValue: (selected) => {
+                      if (!selected) {
+                        return (
+                          <Typography component="span" color="text.secondary">
+                            Select city
+                          </Typography>
+                        );
+                      }
+                      return Array.isArray(selected)
+                        ? selected.join(', ')
+                        : String(selected);
+                    },
+                  }}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontWeight: 600,
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      height: 56,
+                      borderRadius: { xs: 3, md: 9999 },
+                      backgroundColor: 'background.default',
+                    },
+                  }}
                 >
-                  To
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 52,
-                      height: 44,
-                      borderRadius: '9999px',
-                      border: '1px solid rgba(148, 163, 184, 0.4)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      color: 'primary.main',
-                      backgroundColor: '#f9fafb',
-                      px: 1,
-                    }}
-                  >
-                    <SwapHoriz fontSize="small" />
-                    <KeyboardArrowDown fontSize="small" />
-                  </Box>
-                  <TextField
-                    select
-                    fullWidth
-                    value={searchParams.to}
-                    onChange={(e) =>
-                      setSearchParams({ ...searchParams, to: e.target.value })
-                    }
-                    placeholder="Going to"
-                    variant="standard"
-                    InputProps={{ disableUnderline: true }}
-                    SelectProps={{
-                      displayEmpty: true,
-                      renderValue: (selected) => {
-                        if (!selected) {
-                          return <span style={{ color: '#9ca3af' }}>Select city</span>;
-                        }
-                        return selected;
-                      },
-                    }}
-                    sx={{
-                      '& .MuiSelect-select': {
-                        py: 1.2,
-                        fontSize: '0.95rem',
-                      },
-                    }}
-                  >
-                    {cities.map((city) => (
-                      <MenuItem key={city} value={city}>
-                        {city}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Box>
+                  {cities.map((city) => (
+                    <MenuItem key={city} value={city}>
+                      {city}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
 
               <Grid
-                item
                 xs={12}
                 md={2}
                 sx={{
@@ -259,68 +244,37 @@ export default function Home() {
                   mt: { xs: 1.5, md: 0 },
                 }}
               >
-                <Typography
-                  variant="caption"
-                  sx={{ fontWeight: 600, color: 'text.secondary', mb: 0.5, display: 'block' }}
-                >
-                  Date
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <Box
-                    sx={{
-                      width: 52,
-                      height: 44,
-                      borderRadius: '9999px',
-                      border: '1px solid rgba(148, 163, 184, 0.4)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      color: 'primary.main',
-                      backgroundColor: '#f9fafb',
-                      px: 1,
-                    }}
-                  >
-                    <CalendarMonth fontSize="small" />
-                    <KeyboardArrowDown fontSize="small" />
-                  </Box>
-                  <TextField
-                    fullWidth
-                    type="date"
-                    value={searchParams.date}
-                    onChange={(e) =>
-                      setSearchParams({ ...searchParams, date: e.target.value })
-                    }
-                    InputLabelProps={{ shrink: true }}
-                    variant="standard"
-                    InputProps={{ 
-                      disableUnderline: true,
-                    }}
-                    sx={{
-                      '& input': {
-                        py: 1.2,
-                        fontSize: '0.95rem',
-                      },
-                      '& input::-webkit-calendar-picker-indicator': {
-                        cursor: 'pointer',
-                        opacity: 0.6,
-                        '&:hover': {
-                          opacity: 1,
-                        },
-                      },
-                      '& input[type="date"]:not(:focus):not(:valid)': {
-                        color: 'transparent',
-                      },
-                      '& input[type="date"]:not(:focus):not(:valid)::before': {
-                        content: '"dd/mm/yyyy"',
-                        color: '#9ca3af',
-                      },
-                    }}
-                  />
-                </Box>
+                <TextField
+                  fullWidth
+                  label="Date"
+                  type="date"
+                  value={searchParams.date}
+                  onChange={(e) =>
+                    setSearchParams({ ...searchParams, date: e.target.value })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  variant="outlined"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <CalendarMonth fontSize="small" color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      fontWeight: 600,
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      height: 56,
+                      borderRadius: { xs: 3, md: 9999 },
+                      backgroundColor: 'background.default',
+                    },
+                  }}
+                />
               </Grid>
 
               <Grid
-                item
                 xs={12}
                 md={2}
                 sx={{
@@ -339,14 +293,13 @@ export default function Home() {
                     height: 56,
                     px: 5,
                     fontSize: '1.05rem',
-                    borderRadius: 9999,
-                    background: 'linear-gradient(135deg, #0f4c81, #1d7ad8)',
-                    boxShadow: '0 18px 40px rgba(15, 23, 42, 0.6)',
+                    borderRadius: { xs: 3, md: 9999 },
+                    boxShadow: 3,
                     textTransform: 'none',
-                    fontWeight: 600,
+                    fontWeight: 700,
                     width: { xs: '100%', md: 'auto' },
                     '&:hover': {
-                      background: 'linear-gradient(135deg, #0b3458, #165fa9)',
+                      boxShadow: 5,
                     },
                   }}
                 >
@@ -369,19 +322,19 @@ export default function Home() {
       <Box sx={{ backgroundColor: '#0f3554', py: 8 }}>
         <Container maxWidth="lg">
           <Grid container spacing={4} sx={{ textAlign: 'center', color: 'white' }}>
-            <Grid item xs={12} md={4}>
+            <Grid xs={12} md={4}>
               <Typography variant="h2" sx={{ fontWeight: 700, mb: 1 }}>
                 15,000+
               </Typography>
               <Typography variant="h6">Happy Customers</Typography>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid xs={12} md={4}>
               <Typography variant="h2" sx={{ fontWeight: 700, mb: 1 }}>
                 250+
               </Typography>
               <Typography variant="h6">Daily Routes</Typography>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid xs={12} md={4}>
               <Typography variant="h2" sx={{ fontWeight: 700, mb: 1 }}>
                 24/7
               </Typography>
@@ -398,7 +351,7 @@ export default function Home() {
             Why Choose RideWay?
           </Typography>
           <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
+            <Grid xs={12} md={4}>
               <Paper sx={{ p: 4, height: '100%', textAlign: 'center' }}>
                 <Typography variant="h5" sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
                   Easy Booking
@@ -408,7 +361,7 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid xs={12} md={4}>
               <Paper sx={{ p: 4, height: '100%', textAlign: 'center' }}>
                 <Typography variant="h5" sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
                   Secure Payments
@@ -418,7 +371,7 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid xs={12} md={4}>
               <Paper sx={{ p: 4, height: '100%', textAlign: 'center' }}>
                 <Typography variant="h5" sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
                   Reliable Service
@@ -442,7 +395,7 @@ export default function Home() {
             Plan Your Trip in 3 Steps
           </Typography>
           <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
+            <Grid xs={12} md={4}>
               <Paper
                 sx={{
                   p: 4,
@@ -464,7 +417,7 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid xs={12} md={4}>
               <Paper
                 sx={{
                   p: 4,
@@ -486,7 +439,7 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid xs={12} md={4}>
               <Paper
                 sx={{
                   p: 4,

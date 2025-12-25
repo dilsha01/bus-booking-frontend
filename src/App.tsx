@@ -6,6 +6,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { theme } from './theme';
 import MainLayout from './components/MainLayout';
 import AdminLayout from './components/AdminLayout';
+import { PrivateRoute } from './components/PrivateRoute';
+import { AdminRoute } from './components/AdminRoute';
 
 // Lazy load pages for better performance
 const Home = lazy(() => import('./pages/Home'));
@@ -48,7 +50,11 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<Home />} />
               <Route path="/trips" element={<Trips />} />
-              <Route path="/booking/:tripId" element={<Booking />} />
+              <Route path="/booking/:tripId" element={
+                <PrivateRoute>
+                  <Booking />
+                </PrivateRoute>
+              } />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
@@ -57,7 +63,11 @@ function App() {
             </Route>
 
             {/* Admin routes */}
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route path="/admin" element={
+              <AdminRoute>
+                <AdminLayout />
+              </AdminRoute>
+            }>
               <Route index element={<AdminDashboard />} />
               <Route path="buses" element={<ManageBuses />} />
               <Route path="trips" element={<ManageTrips />} />

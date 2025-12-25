@@ -14,12 +14,18 @@ import {
   Divider,
   useScrollTrigger,
   Slide,
+  Menu,
+  MenuItem,
+  Avatar,
 } from '@mui/material';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import LoginIcon from '@mui/icons-material/Login';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useAuth } from '../hooks/useAuth';
 
 const navItems = [
   { label: 'Journeys', path: '/trips' },
@@ -42,9 +48,26 @@ function HideOnScroll({ children }: HideOnScrollProps) {
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, user, isAdmin, logout } = useAuth();
 
   const toggleMobile = () => setMobileOpen((prev) => !prev);
+
+  const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    handleUserMenuClose();
+    navigate('/login');
+  };
 
   const drawer = (
     <Box 
@@ -115,47 +138,101 @@ export default function Navbar() {
       </List>
       <Divider />
       <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-        <Button
-          component={RouterLink}
-          to="/login"
-          variant="outlined"
-          color="primary"
-          fullWidth
-          startIcon={<LoginIcon />}
-          onClick={toggleMobile}
-          sx={{
-            py: 1.2,
-            fontSize: '1rem',
-            fontWeight: 600,
-            borderWidth: 2,
-            '&:hover': {
-              borderWidth: 2,
-            },
-          }}
-        >
-          Login
-        </Button>
-        <Button
-          component={RouterLink}
-          to="/signup"
-          variant="contained"
-          color="secondary"
-          fullWidth
-          onClick={toggleMobile}
-          sx={{
-            py: 1.2,
-            fontSize: '1rem',
-            fontWeight: 600,
-            boxShadow: 2,
-            '&:hover': {
-              boxShadow: 4,
-              transform: 'translateY(-2px)',
-            },
-            transition: 'all 0.3s ease',
-          }}
-        >
-          Sign Up
-        </Button>
+        {isAuthenticated && isAdmin && (
+          <Button
+            component={RouterLink}
+            to="/admin"
+            variant="contained"
+            color="warning"
+            fullWidth
+            startIcon={<AdminPanelSettingsIcon />}
+            onClick={toggleMobile}
+            sx={{
+              py: 1.2,
+              fontSize: '1rem',
+              fontWeight: 600,
+            }}
+          >
+            Admin Panel
+          </Button>
+        )}
+        {isAuthenticated ? (
+          <>
+            <Box sx={{ px: 1.5, py: 1, backgroundColor: 'action.hover', borderRadius: 1 }}>
+              <Box sx={{ fontWeight: 600, fontSize: '0.95rem', color: 'text.primary' }}>
+                {user?.name}
+              </Box>
+              <Box sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>
+                {user?.email}
+              </Box>
+            </Box>
+            <Button
+              variant="outlined"
+              color="error"
+              fullWidth
+              startIcon={<LogoutIcon />}
+              onClick={() => {
+                handleLogout();
+                toggleMobile();
+              }}
+              sx={{
+                py: 1.2,
+                fontSize: '1rem',
+                fontWeight: 600,
+                borderWidth: 2,
+                '&:hover': {
+                  borderWidth: 2,
+                },
+              }}
+            >
+              Logout
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              component={RouterLink}
+              to="/login"
+              variant="outlined"
+              color="primary"
+              fullWidth
+              startIcon={<LoginIcon />}
+              onClick={toggleMobile}
+              sx={{
+                py: 1.2,
+                fontSize: '1rem',
+                fontWeight: 600,
+                borderWidth: 2,
+                '&:hover': {
+                  borderWidth: 2,
+                },
+              }}
+            >
+              Login
+            </Button>
+            <Button
+              component={RouterLink}
+              to="/signup"
+              variant="contained"
+              color="secondary"
+              fullWidth
+              onClick={toggleMobile}
+              sx={{
+                py: 1.2,
+                fontSize: '1rem',
+                fontWeight: 600,
+                boxShadow: 2,
+                '&:hover': {
+                  boxShadow: 4,
+                  transform: 'translateY(-2px)',
+                },
+                transition: 'all 0.3s ease',
+              }}
+            >
+              Sign Up
+            </Button>
+          </>
+        )}
       </Box>
     </Box>
   );
@@ -257,52 +334,131 @@ export default function Navbar() {
                     {item.label}
                   </Button>
                 ))}
-                <Button
-                  component={RouterLink}
-                  to="/login"
-                  variant="outlined"
-                  startIcon={<LoginIcon />}
-                  sx={{
-                    ml: 2,
-                    color: 'white',
-                    borderColor: 'rgba(255,255,255,0.7)',
-                    fontWeight: 600,
-                    px: 3,
-                    py: 0.8,
-                    borderWidth: 2,
-                    '&:hover': {
-                      borderColor: 'white',
-                      backgroundColor: 'rgba(255,255,255,0.1)',
-                      borderWidth: 2,
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 12px rgba(255,255,255,0.2)',
-                    },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  Login
-                </Button>
-                <Button
-                  component={RouterLink}
-                  to="/signup"
-                  variant="contained"
-                  color="secondary"
-                  sx={{
-                    ml: 1.5,
-                    fontWeight: 600,
-                    px: 3,
-                    py: 0.8,
-                    boxShadow: 2,
-                    '&:hover': {
-                      backgroundColor: 'secondary.dark',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 12px rgba(255,107,53,0.4)',
-                    },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  Sign Up
-                </Button>
+                
+                {isAuthenticated && isAdmin && (
+                  <Button
+                    component={RouterLink}
+                    to="/admin"
+                    startIcon={<AdminPanelSettingsIcon />}
+                    sx={{
+                      ml: 2,
+                      color: 'white',
+                      fontWeight: 600,
+                      px: 3,
+                      py: 0.8,
+                      backgroundColor: 'rgba(255,107,53,0.2)',
+                      border: '2px solid rgba(255,107,53,0.5)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255,107,53,0.3)',
+                        borderColor: 'secondary.main',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(255,107,53,0.3)',
+                      },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    Admin
+                  </Button>
+                )}
+
+                {isAuthenticated ? (
+                  <Box sx={{ ml: 2, display: 'flex', alignItems: 'center' }}>
+                    <IconButton
+                      onClick={handleUserMenuOpen}
+                      sx={{
+                        p: 0.5,
+                        '&:hover': {
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                        },
+                      }}
+                    >
+                      <Avatar
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          backgroundColor: 'secondary.main',
+                          fontWeight: 600,
+                          fontSize: '1rem',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {user?.name?.charAt(0).toUpperCase() || 'U'}
+                      </Avatar>
+                    </IconButton>
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={handleUserMenuClose}
+                      sx={{
+                        '& .MuiMenu-paper': {
+                          marginTop: '8px',
+                          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+                        },
+                      }}
+                    >
+                      <MenuItem disabled sx={{ fontWeight: 600 }}>
+                        {user?.name}
+                      </MenuItem>
+                      <MenuItem disabled sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>
+                        {user?.email}
+                      </MenuItem>
+                      <Divider />
+                      <MenuItem onClick={handleLogout} sx={{ fontWeight: 500 }}>
+                        <LogoutIcon sx={{ mr: 1.5, fontSize: '1.2rem' }} />
+                        Logout
+                      </MenuItem>
+                    </Menu>
+                  </Box>
+                ) : (
+                  <>
+                    <Button
+                      component={RouterLink}
+                      to="/login"
+                      variant="outlined"
+                      startIcon={<LoginIcon />}
+                      sx={{
+                        ml: 2,
+                        color: 'white',
+                        borderColor: 'rgba(255,255,255,0.7)',
+                        fontWeight: 600,
+                        px: 3,
+                        py: 0.8,
+                        borderWidth: 2,
+                        '&:hover': {
+                          borderColor: 'white',
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          borderWidth: 2,
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0 4px 12px rgba(255,255,255,0.2)',
+                        },
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      component={RouterLink}
+                      to="/signup"
+                      variant="contained"
+                      color="secondary"
+                      sx={{
+                        ml: 1.5,
+                        fontWeight: 600,
+                        px: 3,
+                        py: 0.8,
+                        boxShadow: 2,
+                        '&:hover': {
+                          backgroundColor: 'secondary.dark',
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0 4px 12px rgba(255,107,53,0.4)',
+                        },
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      Sign Up
+                    </Button>
+                  </>
+                )}
               </Box>
 
               {/* Mobile menu button */}
