@@ -25,23 +25,45 @@ export default function VerifyEmail() {
   const verifyEmail = async () => {
     try {
       setStatus('loading');
+      console.log('Starting verification with token:', token);
+      
       const response = await api.get(`/auth/verify-email?token=${token}`);
       
+      console.log('✅ Verification API response:', response);
+      console.log('Response data:', response.data);
+      console.log('Has token?', !!response.data?.token);
+      console.log('Has user?', !!response.data?.user);
+      
       // Auto-login after successful verification
-      if (response.data.token && response.data.user) {
+      if (response.data?.token && response.data?.user) {
+        console.log('Storing auth token and user data');
         localStorage.setItem('authToken', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
+        
+        setStatus('success');
+        setMessage('Email verified successfully! You have been logged in.');
+        
+        // Redirect to home after 3 seconds
+        setTimeout(() => {
+          console.log('Redirecting to home page');
+          navigate('/');
+        }, 3000);
+      } else {
+        // Success but no token/user in response
+        console.warn('⚠️ Verification succeeded but no token/user in response:', response.data);
+        setStatus('success');
+        setMessage('Email verified successfully! Please login to continue.');
+        
+        // Redirect to login after 3 seconds
+        setTimeout(() => {
+          console.log('Redirecting to login page');
+          navigate('/login');
+        }, 3000);
       }
-      
-      setStatus('success');
-      setMessage(response.data.message || 'Email verified successfully!');
-      
-      // Redirect to home after 3 seconds
-      setTimeout(() => {
-        navigate('/');
-      }, 3000);
     } catch (error: any) {
-      console.error('Verification failed:', error);
+      console.error('❌ Verification failed:', error);
+      console.error('Error response:', error.response);
+      console.error('Error data:', error.response?.data);
       setStatus('error');
       setMessage(getErrorMessage(error));
     }
@@ -97,10 +119,12 @@ export default function VerifyEmail() {
                 Email Verified!
               </Typography>
               <Typography variant="body1" sx={{ mb: 3 }}>
-                {message}
+                {message || 'Your email has been verified successfully!'}
               </Typography>
               <Alert severity="success" sx={{ mb: 3 }}>
-                You've been automatically logged in. Redirecting to home page...
+                {message.includes('login') 
+                  ? "You've been automatically logged in. Redirecting to home page..."
+                  : "Redirecting to login page..."}
               </Alert>
               <Button
                 component={Link}
@@ -124,13 +148,17 @@ export default function VerifyEmail() {
               <Typography variant="h4" sx={{ mb: 2, fontWeight: 700, color: 'error.main' }}>
                 Verification Failed
               </Typography>
-              <Typography variant="body1" sx={{ mb: 3 }}>
-                {message}
+              <Typography variant="body1" sx={{ mb: 3, color: 'text.primary' }}>
+                {message || 'Unable to verify your email'}
               </Typography>
               <Alert severity="error" sx={{ mb: 3 }}>
-                This verification link may have expired or is invalid.
+                {message.includes('expired') 
+                  ? 'This verification link has expired. Please request a new one.'
+                  : message.includes('Invalid')
+                  ? 'This verification link is invalid or has already been used.'
+                  : 'This verification link may have expired or is invalid.'}
               </Alert>
-              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <Button
                   component={Link}
                   to="/login"
