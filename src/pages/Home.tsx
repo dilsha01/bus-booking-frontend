@@ -97,7 +97,8 @@ export default function Home() {
             sx={{
               px: { xs: 2.5, md: 4 },
               py: { xs: 2.5, md: 3 },
-              borderRadius: 9999,
+              // Use a softer radius on mobile so it doesn't look like a circle
+              borderRadius: { xs: 4, sm: 6, md: 9999 },
               backgroundColor: '#ffffff',
               boxShadow: '0 22px 55px rgba(15, 23, 42, 0.6)',
               maxWidth: 1040,
