@@ -3,9 +3,11 @@ import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-materi
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService, getErrorMessage } from '../services/api';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { checkAuth } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,6 +31,9 @@ export default function Login() {
       // Store token and user info
       localStorage.setItem('authToken', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
+      
+      // Update auth context
+      await checkAuth();
       
       // Redirect based on role
       if (response.data.user.role === 'admin') {

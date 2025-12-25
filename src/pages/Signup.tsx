@@ -3,6 +3,7 @@ import { Visibility, VisibilityOff, PersonAdd } from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService, getErrorMessage } from '../services/api';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Signup() {
   const navigate = useNavigate();
