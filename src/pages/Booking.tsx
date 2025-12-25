@@ -16,11 +16,13 @@ import {
 } from '@mui/material';
 import { DirectionsBus, Person, EventSeat } from '@mui/icons-material';
 import { tripService, bookingService } from '../services/api';
+import { useAuth } from '../hooks/useAuth';
 import type { Trip } from '../services/api';
 
 export default function Booking() {
   const { tripId } = useParams<{ tripId: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -32,7 +34,7 @@ export default function Booking() {
     email: '',
     phone: '',
     seats: 1,
-    userId: 1, // Temporary hardcoded user ID
+    userId: user?.id || 0, // Use logged-in user's ID
   });
 
   useEffect(() => {
@@ -66,13 +68,13 @@ export default function Booking() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!trip) return;
+    if (!trip || !user?.id) return;
 
     try {
       setSubmitting(true);
       setError('');
       const response = await bookingService.create({
-        userId: formData.userId,
+        userId: user.id,
         tripId: trip.id,
         seats: formData.seats,
       });
