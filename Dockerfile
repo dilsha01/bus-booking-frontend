@@ -16,6 +16,9 @@ COPY . .
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 
+# Set Node options to limit memory usage
+ENV NODE_OPTIONS="--max-old-space-size=512"
+
 RUN npm run build
 
 # Production stage - serve static files with nginx
