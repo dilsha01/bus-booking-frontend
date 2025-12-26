@@ -320,21 +320,21 @@ export default function Home() {
 
       {/* Stats Section */}
       <Box sx={{ backgroundColor: '#0f3554', py: 8 }}>
-        <Container maxWidth="lg">
+        <Container maxWidth="md">
           <Grid container spacing={4} sx={{ textAlign: 'center', color: 'white' }}>
-            <Grid xs={12} md={4}>
+            <Grid item xs={12} md={4}>
               <Typography variant="h2" sx={{ fontWeight: 700, mb: 1 }}>
                 15,000+
               </Typography>
               <Typography variant="h6">Happy Customers</Typography>
             </Grid>
-            <Grid xs={12} md={4}>
+            <Grid item xs={12} md={4}>
               <Typography variant="h2" sx={{ fontWeight: 700, mb: 1 }}>
                 250+
               </Typography>
               <Typography variant="h6">Daily Routes</Typography>
             </Grid>
-            <Grid xs={12} md={4}>
+            <Grid item xs={12} md={4}>
               <Typography variant="h2" sx={{ fontWeight: 700, mb: 1 }}>
                 24/7
               </Typography>
@@ -350,9 +350,9 @@ export default function Home() {
           <Typography variant="h3" sx={{ textAlign: 'center', mb: 6, fontWeight: 700 }}>
             Why Choose RideWay?
           </Typography>
-          <Grid container spacing={4}>
-            <Grid xs={12} md={4}>
-              <Paper sx={{ p: 4, height: '100%', textAlign: 'center' }}>
+          <Grid container spacing={4} justifyContent="center">
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 4, height: '100%', textAlign: 'center', maxWidth: 420, mx: 'auto' }}>
                 <Typography variant="h5" sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
                   Easy Booking
                 </Typography>
@@ -361,8 +361,8 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid xs={12} md={4}>
-              <Paper sx={{ p: 4, height: '100%', textAlign: 'center' }}>
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 4, height: '100%', textAlign: 'center', maxWidth: 420, mx: 'auto' }}>
                 <Typography variant="h5" sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
                   Secure Payments
                 </Typography>
@@ -371,8 +371,8 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid xs={12} md={4}>
-              <Paper sx={{ p: 4, height: '100%', textAlign: 'center' }}>
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 4, height: '100%', textAlign: 'center', maxWidth: 420, mx: 'auto' }}>
                 <Typography variant="h5" sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
                   Reliable Service
                 </Typography>
@@ -394,8 +394,8 @@ export default function Home() {
           >
             Plan Your Trip in 3 Steps
           </Typography>
-          <Grid container spacing={4}>
-            <Grid xs={12} md={4}>
+          <Grid container spacing={4} justifyContent="center">
+            <Grid item xs={12} md={4}>
               <Paper
                 sx={{
                   p: 4,
@@ -417,7 +417,7 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid xs={12} md={4}>
+            <Grid item xs={12} md={4}>
               <Paper
                 sx={{
                   p: 4,
@@ -439,7 +439,7 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid xs={12} md={4}>
+            <Grid item xs={12} md={4}>
               <Paper
                 sx={{
                   p: 4,

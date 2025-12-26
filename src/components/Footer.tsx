@@ -24,7 +24,7 @@ export default function Footer() {
         },
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="md">
         {/* Brand row */}
         <Box
           sx={{
