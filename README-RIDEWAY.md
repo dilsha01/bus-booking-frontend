@@ -5,10 +5,13 @@ React + TypeScript frontend with Material-UI for the RideWay bus booking platfor
 ## Features
 
 - Modern, responsive UI with Material-UI
-- Hero section with trip search
-- Browse and filter available bus trips
-- Complete booking flow with passenger details
-- About, Contact, and Login pages
+- Hero section with trip search and stats
+- Trips list with sorting and full-width journey tiles
+- Complete booking flow, linked to the logged-in user
+- Login and signup with email verification
+- Role-aware navigation and protected/admin routes
+- Admin dashboard pages for buses, trips, users, and bookings
+- About and Contact pages with polished layout
 - Built with React 18 + TypeScript + Vite
 
 ## Prerequisites
@@ -54,12 +57,14 @@ src/
 
 ## Pages
 
-- **Home** - Hero section with search form, stats, and features
-- **Trips** - Browse and search available bus journeys
-- **Booking** - Complete booking with passenger information
-- **About** - Company information
-- **Contact** - Contact form and details
-- **Login** - User authentication (UI only)
+- **Home** – Hero section with search form, stats, and feature cards
+- **Trips** – Filterable journeys list with sorting and booking CTAs
+- **Booking** – Booking screen tied to the authenticated user
+- **Login / Signup** – Authentication with JWT and email verification flow
+- **Verify Email** – Handles post-signup verification links
+- **Admin** – Dashboard plus Manage Buses, Trips, Users, and Bookings
+- **About** – Company information
+- **Contact** – Contact form and details
 
 ## Branding
 
