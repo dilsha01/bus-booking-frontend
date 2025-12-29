@@ -31,14 +31,11 @@ export default function ManageTrips() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [formData, setFormData] = useState({
-    origin: '',
-    destination: '',
-    routeNumber: '',
+    routeId: '',
     departureTime: '',
     arrivalTime: '',
     price: '',
     busId: '',
-    stopsText: '',
   });
 
   useEffect(() => {
@@ -73,26 +70,20 @@ export default function ManageTrips() {
     if (trip) {
       setEditingTrip(trip);
       setFormData({
-        origin: trip.origin,
-        destination: trip.destination,
-        routeNumber: trip.routeNumber,
+        routeId: String(trip.id),
         departureTime: trip.departureTime.substring(0, 16),
         arrivalTime: trip.arrivalTime.substring(0, 16),
         price: trip.price,
         busId: trip.busId.toString(),
-        stopsText: (trip.stops || []).join(', '),
       });
     } else {
       setEditingTrip(null);
       setFormData({
-        origin: '',
-        destination: '',
-        routeNumber: '',
+        routeId: '',
         departureTime: '',
         arrivalTime: '',
         price: '',
         busId: '',
-        stopsText: '',
       });
     }
     setDialogOpen(true);
@@ -105,19 +96,26 @@ export default function ManageTrips() {
 
   const handleSubmit = async () => {
     try {
-      const stops = formData.stopsText
-        .split(',')
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0);
+      if (!formData.routeId) {
+        alert('Please select a route');
+        return;
+      }
 
-      const data = {
-        origin: formData.origin,
-        destination: formData.destination,
-        routeNumber: formData.routeNumber,
+      const selectedRoute = trips.find((t) => t.id === Number(formData.routeId));
+      if (!selectedRoute) {
+        alert('Selected route not found');
+        return;
+      }
+
+      const data: any = {
+        origin: selectedRoute.origin,
+        destination: selectedRoute.destination,
+        routeNumber: selectedRoute.routeNumber,
         departureTime: formData.departureTime,
         arrivalTime: formData.arrivalTime,
         price: formData.price,
-        stops,
+        // inherit sections/stops from the selected route definition
+        stops: selectedRoute.stops,
         busId: parseInt(formData.busId),
       };
       
@@ -213,40 +211,21 @@ export default function ManageTrips() {
         <DialogTitle>{editingTrip ? 'Edit Trip' : 'Add New Trip'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ pt: 2 }}>
-            <Grid item xs={12} md={4}>
-              <TextField
-                label="Route Number"
-                fullWidth
-                value={formData.routeNumber}
-                onChange={(e) => setFormData({ ...formData, routeNumber: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Origin"
-                fullWidth
-                value={formData.origin}
-                onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Destination"
-                fullWidth
-                value={formData.destination}
-                onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
-              />
-            </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Stops / Sections (comma separated, in order)"
+                select
+                label="Route"
                 fullWidth
-                multiline
-                minRows={2}
-                value={formData.stopsText}
-                onChange={(e) => setFormData({ ...formData, stopsText: e.target.value })}
-                helperText="Include origin and destination, e.g. Maharagama, Navinna, Delkanda, Nugegoda, Kirulapone, Thunmulla, Town Hall, Colombo"
-              />
+                value={formData.routeId}
+                onChange={(e) => setFormData({ ...formData, routeId: e.target.value })}
+                helperText="Select an existing route defined under Manage Routes"
+              >
+                {trips.map((route) => (
+                  <MenuItem key={route.id} value={route.id}>
+                    {route.routeNumber}  {route.origin}  {route.destination}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
