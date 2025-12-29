@@ -17,10 +17,18 @@ import {
   DialogActions,
   TextField,
   CircularProgress,
+  MenuItem,
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { busService } from '../../services/api';
-import type { Bus } from '../../services/api';
+import type { Bus, BusType } from '../../services/api';
+
+const BUS_TYPE_LABELS: Record<BusType, string> = {
+  XL: 'Luxury-XL',
+  AC: 'Air conditioned-AC',
+  S: 'Semi Luxury-S',
+  N: 'Normal-N',
+};
 
 export default function ManageBuses() {
   const [buses, setBuses] = useState<Bus[]>([]);
@@ -28,8 +36,9 @@ export default function ManageBuses() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingBus, setEditingBus] = useState<Bus | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
     numberPlate: '',
+    type: 'N' as BusType,
+    company: '',
     totalSeats: 50,
   });
 
@@ -54,13 +63,14 @@ export default function ManageBuses() {
     if (bus) {
       setEditingBus(bus);
       setFormData({
-        name: bus.name,
         numberPlate: bus.numberPlate,
+        type: (bus.type as BusType) || 'N',
+        company: bus.company || '',
         totalSeats: bus.totalSeats,
       });
     } else {
       setEditingBus(null);
-      setFormData({ name: '', numberPlate: '', totalSeats: 50 });
+      setFormData({ numberPlate: '', type: 'N', company: '', totalSeats: 50 });
     }
     setDialogOpen(true);
   };
@@ -121,8 +131,9 @@ export default function ManageBuses() {
           <TableHead>
             <TableRow>
               <TableCell><strong>ID</strong></TableCell>
-              <TableCell><strong>Name</strong></TableCell>
               <TableCell><strong>Number Plate</strong></TableCell>
+              <TableCell><strong>Type</strong></TableCell>
+              <TableCell><strong>Company</strong></TableCell>
               <TableCell><strong>Total Seats</strong></TableCell>
               <TableCell align="right"><strong>Actions</strong></TableCell>
             </TableRow>
@@ -131,8 +142,9 @@ export default function ManageBuses() {
             {buses.map((bus) => (
               <TableRow key={bus.id}>
                 <TableCell>{bus.id}</TableCell>
-                <TableCell>{bus.name}</TableCell>
                 <TableCell>{bus.numberPlate}</TableCell>
+                <TableCell>{bus.type ? BUS_TYPE_LABELS[bus.type] : '-'}</TableCell>
+                <TableCell>{bus.company || '-'}</TableCell>
                 <TableCell>{bus.totalSeats}</TableCell>
                 <TableCell align="right">
                   <IconButton color="primary" onClick={() => handleOpenDialog(bus)}>
@@ -153,16 +165,29 @@ export default function ManageBuses() {
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
             <TextField
-              label="Bus Name"
-              fullWidth
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
-            <TextField
               label="Number Plate"
               fullWidth
               value={formData.numberPlate}
               onChange={(e) => setFormData({ ...formData, numberPlate: e.target.value })}
+            />
+            <TextField
+              select
+              label="Type"
+              fullWidth
+              value={formData.type}
+              onChange={(e) => setFormData({ ...formData, type: e.target.value as BusType })}
+            >
+              {Object.entries(BUS_TYPE_LABELS).map(([value, label]) => (
+                <MenuItem key={value} value={value}>
+                  {label}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              label="Company"
+              fullWidth
+              value={formData.company}
+              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
             />
             <TextField
               label="Total Seats"

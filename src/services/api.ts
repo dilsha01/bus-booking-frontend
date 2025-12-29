@@ -80,6 +80,8 @@ export type Trip = {
     id: number;
     name: string;
     numberPlate: string;
+    type?: BusType;
+    company?: string;
     totalSeats: number;
   };
 };
@@ -97,10 +99,14 @@ export type Booking = {
 
 export type Bus = {
   id: number;
-  name: string;
+  name?: string;
   numberPlate: string;
+  type?: BusType;
+  company?: string;
   totalSeats: number;
 };
+
+export type BusType = 'XL' | 'AC' | 'S' | 'N';
 
 export type DashboardStats = {
   totalBuses: number;
