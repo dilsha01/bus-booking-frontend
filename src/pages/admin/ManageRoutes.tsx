@@ -20,20 +20,22 @@ import {
   Grid,
   Chip,
 } from '@mui/material';
-import { Edit } from '@mui/icons-material';
-import { tripService } from '../../services/api';
-import type { Trip } from '../../services/api';
+import { Add, Edit } from '@mui/icons-material';
+import { routeService } from '../../services/api';
+import type { Route } from '../../services/api';
 
 export default function ManageRoutes() {
-  const [trips, setTrips] = useState<Trip[]>([]);
+  const [routes, setRoutes] = useState<Route[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
+  const [editingRoute, setEditingRoute] = useState<Route | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [formData, setFormData] = useState({
     routeNumber: '',
     origin: '',
     destination: '',
     stopsText: '',
+    category: '',
   });
 
   useEffect(() => {
@@ -43,47 +45,70 @@ export default function ManageRoutes() {
   const loadRoutes = async () => {
     try {
       setLoading(true);
-      const response = await tripService.getAll();
-      setTrips(response.data || []);
+      const response = await routeService.getAll();
+      setRoutes(response.data || []);
     } catch (error) {
       console.error('Failed to load routes:', error);
-      setTrips([]);
+      setRoutes([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOpenDialog = (trip: Trip) => {
-    setEditingTrip(trip);
+  const handleOpenDialog = (route?: Route) => {
+    if (route) {
+      setEditingRoute(route);
+      setFormData({
+        routeNumber: route.routeNumber,
+        origin: route.origin,
+        destination: route.destination,
+        stopsText: (route.stops || []).join(', '),
+        category: route.category || '',
+      });
+    } else {
+      setEditingRoute(null);
+      setFormData({
+        routeNumber: '',
+        origin: '',
+        destination: '',
+        stopsText: '',
+        category: '',
+      });
+    }
     setFormData({
-      routeNumber: trip.routeNumber,
-      origin: trip.origin,
-      destination: trip.destination,
-      stopsText: (trip.stops || []).join(', '),
+      routeNumber: route?.routeNumber || '',
+      origin: route?.origin || '',
+      destination: route?.destination || '',
+      stopsText: (route?.stops || []).join(', '),
     });
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
-    setEditingTrip(null);
+    setEditingRoute(null);
   };
 
   const handleSave = async () => {
-    if (!editingTrip) return;
-
     try {
       const stops = formData.stopsText
         .split(',')
         .map((s) => s.trim())
         .filter((s) => s.length > 0);
 
-      await tripService.update(editingTrip.id, {
+      const payload = {
         routeNumber: formData.routeNumber,
         origin: formData.origin,
         destination: formData.destination,
         stops,
-      });
+        category: formData.category || null,
+      };
+
+      if (editingRoute) {
+        await routeService.update(editingRoute.id, payload);
+      } else {
+        await routeService.create(payload as any);
+      }
 
       handleCloseDialog();
       loadRoutes();
@@ -101,42 +126,64 @@ export default function ManageRoutes() {
     );
   }
 
+  const filteredRoutes = categoryFilter === 'all'
+    ? routes
+    : routes.filter((r) => r.category === categoryFilter);
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: 700 }}>
           Manage Routes
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Edit route numbers and sections (stops) for each trip.
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            {['all', 'XL', 'AC', 'S', 'N'].map((type) => (
+              <Button
+                key={type}
+                size="small"
+                variant={categoryFilter === type ? 'contained' : 'outlined'}
+                onClick={() => setCategoryFilter(type)}
+              >
+                {type === 'all' ? 'All' : type}
+              </Button>
+            ))}
+          </Box>
+          <Button variant="contained" startIcon={<Add />} onClick={() => handleOpenDialog()}>
+            Add Route
+          </Button>
+        </Box>
       </Box>
 
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell><strong>ID</strong></TableCell>
               <TableCell><strong>Route No</strong></TableCell>
+              <TableCell><strong>Category</strong></TableCell>
               <TableCell><strong>Route</strong></TableCell>
               <TableCell><strong>Sections</strong></TableCell>
               <TableCell align="right"><strong>Actions</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {trips.map((trip) => {
-              const stops = trip.stops || [];
+            {filteredRoutes.map((route) => {
+              const stops = route.stops || [];
               const sectionLabel =
                 stops.length > 1
                   ? `${stops[0]}  ${stops[stops.length - 1]} (${stops.length} stops)`
-                  : `${trip.origin}  ${trip.destination}`;
+                  : `${route.origin}  ${route.destination}`;
 
               return (
-                <TableRow key={trip.id} hover>
-                  <TableCell>{trip.id}</TableCell>
-                  <TableCell>{trip.routeNumber}</TableCell>
+                <TableRow key={route.id} hover>
+                  <TableCell>{route.routeNumber}</TableCell>
                   <TableCell>
-                    {trip.origin}  {trip.destination}
+                    {route.category && (
+                      <Chip label={route.category} size="small" variant="outlined" />
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {route.origin}  {route.destination}
                   </TableCell>
                   <TableCell>
                     <Chip
@@ -146,7 +193,7 @@ export default function ManageRoutes() {
                     />
                   </TableCell>
                   <TableCell align="right">
-                    <IconButton color="primary" onClick={() => handleOpenDialog(trip)}>
+                    <IconButton color="primary" onClick={() => handleOpenDialog(route)}>
                       <Edit />
                     </IconButton>
                   </TableCell>
@@ -158,10 +205,10 @@ export default function ManageRoutes() {
       </TableContainer>
 
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-        <DialogTitle>Edit Route</DialogTitle>
+        <DialogTitle>{editingRoute ? 'Edit Route' : 'Add Route'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ pt: 2 }}>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={3}>
               <TextField
                 label="Route Number"
                 fullWidth
@@ -169,7 +216,7 @@ export default function ManageRoutes() {
                 onChange={(e) => setFormData({ ...formData, routeNumber: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={3}>
               <TextField
                 label="Origin"
                 fullWidth
@@ -177,13 +224,30 @@ export default function ManageRoutes() {
                 onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={3}>
               <TextField
                 label="Destination"
                 fullWidth
                 value={formData.destination}
                 onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
               />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                select
+                label="Category"
+                fullWidth
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                helperText="Optional: choose XL, AC, S or N"
+              >
+                <option value="" />
+                {['XL', 'AC', 'S', 'N'].map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </TextField>
             </Grid>
             <Grid item xs={12}>
               <TextField

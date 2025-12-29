@@ -68,6 +68,15 @@ api.interceptors.response.use(
 );
 
 // Types
+export type Route = {
+  id: number;
+  routeNumber: string;
+  origin: string;
+  destination: string;
+  category?: BusType | null;
+  stops?: string[];
+};
+
 export type Trip = {
   id: number;
   origin: string;
@@ -79,6 +88,8 @@ export type Trip = {
   busId: number;
   // Ordered list of stops/sections along this route
   stops?: string[];
+  routeId?: number | null;
+  Route?: Route;
   Bus?: {
     id: number;
     name: string;
@@ -132,6 +143,14 @@ export const tripService = {
   create: (data: Omit<Trip, 'id'>) => api.post<Trip>('/trips', data),
   update: (id: number, data: Partial<Trip>) => api.put<Trip>(`/trips/${id}`, data),
   delete: (id: number) => api.delete(`/trips/${id}`),
+};
+
+export const routeService = {
+  getAll: () => api.get<Route[]>('/routes'),
+  getById: (id: number) => api.get<Route>(`/routes/${id}`),
+  create: (data: Omit<Route, 'id'>) => api.post<Route>('/routes', data),
+  update: (id: number, data: Partial<Route>) => api.put<Route>(`/routes/${id}`, data),
+  delete: (id: number) => api.delete(`/routes/${id}`),
 };
 
 export const bookingService = {

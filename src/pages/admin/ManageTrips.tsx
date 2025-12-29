@@ -21,12 +21,13 @@ import {
   Grid,
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
-import { tripService, busService } from '../../services/api';
-import type { Trip, Bus } from '../../services/api';
+import { tripService, busService, routeService } from '../../services/api';
+import type { Trip, Bus, Route } from '../../services/api';
 
 export default function ManageTrips() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [buses, setBuses] = useState<Bus[]>([]);
+  const [routes, setRoutes] = useState<Route[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
@@ -41,6 +42,7 @@ export default function ManageTrips() {
   useEffect(() => {
     loadTrips();
     loadBuses();
+    loadRoutes();
   }, []);
 
   const loadTrips = async () => {
@@ -66,11 +68,21 @@ export default function ManageTrips() {
     }
   };
 
+  const loadRoutes = async () => {
+    try {
+      const response = await routeService.getAll();
+      setRoutes(response.data || []);
+    } catch (error: any) {
+      console.error('Failed to load routes:', error);
+      setRoutes([]);
+    }
+  };
+
   const handleOpenDialog = (trip?: Trip) => {
     if (trip) {
       setEditingTrip(trip);
       setFormData({
-        routeId: String(trip.id),
+        routeId: trip.routeId ? String(trip.routeId) : '',
         departureTime: trip.departureTime.substring(0, 16),
         arrivalTime: trip.arrivalTime.substring(0, 16),
         price: trip.price,
@@ -101,7 +113,7 @@ export default function ManageTrips() {
         return;
       }
 
-      const selectedRoute = trips.find((t) => t.id === Number(formData.routeId));
+      const selectedRoute = routes.find((r) => r.id === Number(formData.routeId));
       if (!selectedRoute) {
         alert('Selected route not found');
         return;
@@ -116,6 +128,7 @@ export default function ManageTrips() {
         price: formData.price,
         // inherit sections/stops from the selected route definition
         stops: selectedRoute.stops,
+        routeId: selectedRoute.id,
         busId: parseInt(formData.busId),
       };
       
@@ -174,7 +187,7 @@ export default function ManageTrips() {
               <TableCell><strong>ID</strong></TableCell>
               <TableCell><strong>Route No</strong></TableCell>
               <TableCell><strong>Route</strong></TableCell>
-              <TableCell><strong>Bus</strong></TableCell>
+              <TableCell><strong>Bus (Type)</strong></TableCell>
               <TableCell><strong>Departure</strong></TableCell>
               <TableCell><strong>Arrival</strong></TableCell>
               <TableCell><strong>Price (LKR)</strong></TableCell>
@@ -189,7 +202,10 @@ export default function ManageTrips() {
                 <TableCell>
                   {trip.origin} → {trip.destination}
                 </TableCell>
-                <TableCell>{trip.Bus?.name || 'N/A'}</TableCell>
+                <TableCell>
+                  {trip.Bus?.name || 'N/A'}
+                  {trip.Bus?.type && ` (${trip.Bus.type})`}
+                </TableCell>
                 <TableCell>{formatDateTime(trip.departureTime)}</TableCell>
                 <TableCell>{formatDateTime(trip.arrivalTime)}</TableCell>
                 <TableCell>{parseFloat(trip.price).toFixed(2)}</TableCell>
@@ -220,9 +236,10 @@ export default function ManageTrips() {
                 onChange={(e) => setFormData({ ...formData, routeId: e.target.value })}
                 helperText="Select an existing route defined under Manage Routes"
               >
-                {trips.map((route) => (
+                {routes.map((route) => (
                   <MenuItem key={route.id} value={route.id}>
                     {route.routeNumber}  {route.origin}  {route.destination}
+                    {route.category ? ` (${route.category})` : ''}
                   </MenuItem>
                 ))}
               </TextField>
@@ -259,14 +276,14 @@ export default function ManageTrips() {
             <Grid item xs={12} md={6}>
               <TextField
                 select
-                label="Bus"
+                label="Bus (category)"
                 fullWidth
                 value={formData.busId}
                 onChange={(e) => setFormData({ ...formData, busId: e.target.value })}
               >
                 {buses.map((bus) => (
                   <MenuItem key={bus.id} value={bus.id}>
-                    {bus.name} ({bus.numberPlate})
+                    {bus.name || bus.numberPlate} {bus.type ? `- ${bus.type}` : ''}
                   </MenuItem>
                 ))}
               </TextField>
