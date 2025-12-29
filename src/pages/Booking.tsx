@@ -322,6 +322,7 @@ import {
   Alert,
   CircularProgress,
   InputAdornment,
+  MenuItem,
 } from '@mui/material';
 import { DirectionsBus, Person, EventSeat } from '@mui/icons-material';
 import { tripService, bookingService } from '../services/api';
@@ -344,10 +345,14 @@ export default function Booking() {
     phone: '',
     seats: 1,
     userId: user?.id || 0, // Use logged-in user's ID
+    startStop: '',
+    endStop: '',
   });
 
   useEffect(() => {
     loadTrip();
+    // We intentionally only refetch when tripId changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripId]);
 
   const loadTrip = async () => {
@@ -362,6 +367,15 @@ export default function Booking() {
       const response = await tripService.getById(Number(tripId));
       if (response.data) {
         setTrip(response.data);
+        // Pre-select full route as default section
+        const stops = Array.isArray(response.data.stops) ? response.data.stops : [];
+        if (stops.length >= 2) {
+          setFormData((prev) => ({
+            ...prev,
+            startStop: stops[0],
+            endStop: stops[stops.length - 1],
+          }));
+        }
         setError('');
       } else {
         setError('Trip not found');
@@ -386,6 +400,8 @@ export default function Booking() {
         userId: user.id,
         tripId: trip.id,
         seats: formData.seats,
+        startStop: formData.startStop,
+        endStop: formData.endStop,
       });
 
       if (response.data) {
@@ -420,6 +436,26 @@ export default function Booking() {
   const formatLKR = (value: number) =>
     `LKR ${value.toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+  const calculateSectionPricePerSeat = () => {
+    if (!trip || !Array.isArray(trip.stops) || trip.stops.length < 2) {
+      return parseFloat(trip?.price || '0');
+    }
+
+    const stops = trip.stops;
+    const fromIndex = stops.findIndex((s) => s === formData.startStop);
+    const toIndex = stops.findIndex((s) => s === formData.endStop);
+
+    if (fromIndex === -1 || toIndex === -1 || fromIndex >= toIndex) {
+      return parseFloat(trip.price);
+    }
+
+    const fullSegments = stops.length - 1;
+    const basePrice = parseFloat(trip.price); // full route price per seat
+    const pricePerSegment = fullSegments > 0 ? basePrice / fullSegments : basePrice;
+    const segmentCount = toIndex - fromIndex;
+    return pricePerSegment * segmentCount;
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
@@ -439,7 +475,8 @@ export default function Booking() {
     );
   }
 
-  const totalPrice = parseFloat(trip.price) * formData.seats;
+  const pricePerSeatForSection = calculateSectionPricePerSeat();
+  const totalPrice = pricePerSeatForSection * formData.seats;
 
   return (
     <Box
@@ -550,6 +587,42 @@ export default function Booking() {
                       />
                     </Grid>
 
+                    {Array.isArray(trip.stops) && trip.stops.length >= 2 && (
+                      <>
+                        <Grid item xs={12} md={6}>
+                          <TextField
+                            select
+                            fullWidth
+                            label="Boarding Point (From)"
+                            value={formData.startStop}
+                            onChange={(e) => setFormData({ ...formData, startStop: e.target.value })}
+                          >
+                            {trip.stops.map((stop) => (
+                              <MenuItem key={stop} value={stop}>
+                                {stop}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        </Grid>
+
+                        <Grid item xs={12} md={6}>
+                          <TextField
+                            select
+                            fullWidth
+                            label="Drop-off Point (To)"
+                            value={formData.endStop}
+                            onChange={(e) => setFormData({ ...formData, endStop: e.target.value })}
+                          >
+                            {trip.stops.map((stop) => (
+                              <MenuItem key={stop} value={stop}>
+                                {stop}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        </Grid>
+                      </>
+                    )}
+
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
@@ -657,7 +730,7 @@ export default function Booking() {
                     Route
                   </Typography>
                   <Typography variant="body1" sx={{ fontWeight: 700 }}>
-                    {trip.origin} → {trip.destination}
+                    {trip.origin} → {trip.destination} (Route {trip.routeNumber})
                   </Typography>
                 </Box>
 
@@ -696,10 +769,10 @@ export default function Booking() {
               <Box sx={{ display: 'grid', gap: 1 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary">
-                    Price per seat
+                    Price per seat (selected section)
                   </Typography>
                   <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                    {formatLKR(parseFloat(trip.price))}
+                    {formatLKR(pricePerSeatForSection)}
                   </Typography>
                 </Box>
 

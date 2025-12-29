@@ -72,10 +72,13 @@ export type Trip = {
   id: number;
   origin: string;
   destination: string;
+  routeNumber: string;
   departureTime: string;
   arrivalTime: string;
   price: string;
   busId: number;
+  // Ordered list of stops/sections along this route
+  stops?: string[];
   Bus?: {
     id: number;
     name: string;
@@ -92,6 +95,9 @@ export type Booking = {
   status: 'pending' | 'confirmed' | 'cancelled';
   userId: number;
   tripId: number;
+  startStop?: string | null;
+  endStop?: string | null;
+  totalPrice?: string;
   Trip?: Trip;
   createdAt?: string;
   updatedAt?: string;
@@ -132,7 +138,7 @@ export const bookingService = {
   getAll: (params?: { status?: string; userId?: number; tripId?: number }) => 
     api.get<Booking[]>('/bookings', { params }),
   getById: (id: number) => api.get<Booking>(`/bookings/${id}`),
-  create: (data: { userId: number; tripId: number; seats: number }) =>
+  create: (data: { userId: number; tripId: number; seats: number; startStop?: string; endStop?: string }) =>
     api.post<Booking>('/bookings', data),
   update: (id: number, data: Partial<Booking>) => api.put<Booking>(`/bookings/${id}`, data),
   delete: (id: number) => api.delete(`/bookings/${id}`),

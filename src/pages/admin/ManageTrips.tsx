@@ -33,10 +33,12 @@ export default function ManageTrips() {
   const [formData, setFormData] = useState({
     origin: '',
     destination: '',
+    routeNumber: '',
     departureTime: '',
     arrivalTime: '',
     price: '',
     busId: '',
+    stopsText: '',
   });
 
   useEffect(() => {
@@ -73,20 +75,24 @@ export default function ManageTrips() {
       setFormData({
         origin: trip.origin,
         destination: trip.destination,
+        routeNumber: trip.routeNumber,
         departureTime: trip.departureTime.substring(0, 16),
         arrivalTime: trip.arrivalTime.substring(0, 16),
         price: trip.price,
         busId: trip.busId.toString(),
+        stopsText: (trip.stops || []).join(', '),
       });
     } else {
       setEditingTrip(null);
       setFormData({
         origin: '',
         destination: '',
+        routeNumber: '',
         departureTime: '',
         arrivalTime: '',
         price: '',
         busId: '',
+        stopsText: '',
       });
     }
     setDialogOpen(true);
@@ -99,8 +105,19 @@ export default function ManageTrips() {
 
   const handleSubmit = async () => {
     try {
+      const stops = formData.stopsText
+        .split(',')
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+
       const data = {
-        ...formData,
+        origin: formData.origin,
+        destination: formData.destination,
+        routeNumber: formData.routeNumber,
+        departureTime: formData.departureTime,
+        arrivalTime: formData.arrivalTime,
+        price: formData.price,
+        stops,
         busId: parseInt(formData.busId),
       };
       
@@ -157,6 +174,7 @@ export default function ManageTrips() {
           <TableHead>
             <TableRow>
               <TableCell><strong>ID</strong></TableCell>
+              <TableCell><strong>Route No</strong></TableCell>
               <TableCell><strong>Route</strong></TableCell>
               <TableCell><strong>Bus</strong></TableCell>
               <TableCell><strong>Departure</strong></TableCell>
@@ -169,6 +187,7 @@ export default function ManageTrips() {
             {trips.map((trip) => (
               <TableRow key={trip.id}>
                 <TableCell>{trip.id}</TableCell>
+                <TableCell>{trip.routeNumber}</TableCell>
                 <TableCell>
                   {trip.origin} → {trip.destination}
                 </TableCell>
@@ -194,6 +213,14 @@ export default function ManageTrips() {
         <DialogTitle>{editingTrip ? 'Edit Trip' : 'Add New Trip'}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ pt: 2 }}>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Route Number"
+                fullWidth
+                value={formData.routeNumber}
+                onChange={(e) => setFormData({ ...formData, routeNumber: e.target.value })}
+              />
+            </Grid>
             <Grid item xs={12} md={6}>
               <TextField
                 label="Origin"
@@ -208,6 +235,17 @@ export default function ManageTrips() {
                 fullWidth
                 value={formData.destination}
                 onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Stops / Sections (comma separated, in order)"
+                fullWidth
+                multiline
+                minRows={2}
+                value={formData.stopsText}
+                onChange={(e) => setFormData({ ...formData, stopsText: e.target.value })}
+                helperText="Include origin and destination, e.g. Maharagama, Navinna, Delkanda, Nugegoda, Kirulapone, Thunmulla, Town Hall, Colombo"
               />
             </Grid>
             <Grid item xs={12} md={6}>
