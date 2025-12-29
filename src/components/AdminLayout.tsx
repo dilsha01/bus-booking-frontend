@@ -29,6 +29,7 @@ const drawerWidth = 260;
 const menuItems = [
   { text: 'Dashboard', icon: <Dashboard />, path: '/admin' },
   { text: 'Manage Buses', icon: <DirectionsBus />, path: '/admin/buses' },
+  { text: 'Manage Routes', icon: <Route />, path: '/admin/routes' },
   { text: 'Manage Trips', icon: <Route />, path: '/admin/trips' },
   { text: 'View Bookings', icon: <BookOnline />, path: '/admin/bookings' },
   { text: 'Manage Users', icon: <People />, path: '/admin/users' },

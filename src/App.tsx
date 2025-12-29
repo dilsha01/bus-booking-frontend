@@ -24,6 +24,7 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 const ManageBuses = lazy(() => import('./pages/admin/ManageBuses'));
 const ManageTrips = lazy(() => import('./pages/admin/ManageTrips'));
+const ManageRoutes = lazy(() => import('./pages/admin/ManageRoutes'));
 const ViewBookings = lazy(() => import('./pages/admin/ViewBookings'));
 const ManageUsers = lazy(() => import('./pages/admin/ManageUsers'));
 
@@ -76,6 +77,7 @@ function App() {
               }>
                 <Route index element={<AdminDashboard />} />
                 <Route path="buses" element={<ManageBuses />} />
+                <Route path="routes" element={<ManageRoutes />} />
                 <Route path="trips" element={<ManageTrips />} />
                 <Route path="bookings" element={<ViewBookings />} />
                 <Route path="users" element={<ManageUsers />} />
