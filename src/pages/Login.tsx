@@ -500,6 +500,8 @@ export default function Login() {
 
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
                       <Button
+                        component={Link}
+                        to="/forgot-password"
                         variant="text"
                         size="small"
                         sx={{

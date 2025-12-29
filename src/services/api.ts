@@ -166,6 +166,10 @@ export const authService = {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
   },
+  forgotPassword: (email: string) =>
+    api.post('/auth/forgot-password', { email }),
+  resetPassword: (token: string, password: string) =>
+    api.post('/auth/reset-password', { token, password }),
 };
 
 // Helper function to extract error message

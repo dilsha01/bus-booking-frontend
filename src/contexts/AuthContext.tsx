@@ -49,6 +49,55 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuthenticated(false);
   };
 
+  // Auto-logout after period of inactivity (e.g. 5 minutes)
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    const INACTIVITY_LIMIT_MS = 5 * 60 * 1000; // 5 minutes
+    let timeoutId: number | undefined;
+
+    const resetTimer = () => {
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+
+      timeoutId = window.setTimeout(() => {
+        console.log('⏰ Auto-logout due to inactivity');
+        logout();
+        // Ensure user is taken back to login page
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login';
+        }
+      }, INACTIVITY_LIMIT_MS);
+    };
+
+    const activityEvents: (keyof WindowEventMap)[] = [
+      'mousemove',
+      'keydown',
+      'click',
+      'scroll',
+      'touchstart',
+    ];
+
+    activityEvents.forEach((event) => {
+      window.addEventListener(event, resetTimer);
+    });
+
+    // Start initial timer when user becomes authenticated
+    resetTimer();
+
+    return () => {
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+      activityEvents.forEach((event) => {
+        window.removeEventListener(event, resetTimer);
+      });
+    };
+  }, [isAuthenticated]);
+
   const value: AuthContextType = {
     user,
     loading,
