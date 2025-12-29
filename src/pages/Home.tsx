@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Box,
   Container,
@@ -7,8 +7,8 @@ import {
   InputAdornment,
   Button,
   Paper,
-  MenuItem,
   Grid,
+  Autocomplete,
 } from '@mui/material';
 import {
   CalendarMonth,
@@ -17,19 +17,8 @@ import {
   SwapHoriz,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-
-const cities = [
-  'Colombo',
-  'Kandy',
-  'Galle',
-  'Jaffna',
-  'Negombo',
-  'Anuradhapura',
-  'Trincomalee',
-  'Ella',
-  'Nuwara Eliya',
-  'Matara',
-];
+import { tripService } from '../services/api';
+import type { Trip } from '../services/api';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -38,6 +27,40 @@ export default function Home() {
     to: '',
     date: '',
   });
+
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [loadingStops, setLoadingStops] = useState(false);
+
+  useEffect(() => {
+    const loadStops = async () => {
+      try {
+        setLoadingStops(true);
+        const response = await tripService.getAll();
+        setTrips(response.data || []);
+      } catch (error) {
+        console.error('Failed to load routes for search suggestions:', error);
+        setTrips([]);
+      } finally {
+        setLoadingStops(false);
+      }
+    };
+
+    loadStops();
+  }, []);
+
+  const allStops = useMemo(() => {
+    const set = new Set<string>();
+    trips.forEach((trip) => {
+      if (trip.origin) set.add(trip.origin);
+      if (trip.destination) set.add(trip.destination);
+      if (Array.isArray(trip.stops)) {
+        trip.stops.forEach((stop) => {
+          if (stop) set.add(stop);
+        });
+      }
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [trips]);
 
   const handleSearch = () => {
     if (searchParams.from && searchParams.to) {
@@ -116,68 +139,57 @@ export default function Home() {
               }}
             >
               <Grid
-                xs={12}
-                md={4}
+                size={{ xs: 12, md: 4 }}
                 sx={{
                   borderRight: { md: 1 },
                   borderColor: 'divider',
                   pr: { md: 2.5 },
                 }}
               >
-                <TextField
-                  select
+                <Autocomplete
                   fullWidth
-                  label="From"
+                  freeSolo
+                  loading={loadingStops}
+                  options={allStops}
                   value={searchParams.from}
-                  onChange={(e) =>
-                    setSearchParams({ ...searchParams, from: e.target.value })
+                  onChange={(_, newValue) =>
+                    setSearchParams({ ...searchParams, from: newValue || '' })
                   }
-                  variant="outlined"
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LocationOn fontSize="small" color="primary" />
-                      </InputAdornment>
-                    ),
-                  }}
-                  SelectProps={{
-                    displayEmpty: true,
-                    renderValue: (selected) => {
-                      if (!selected) {
-                        return (
-                          <Typography component="span" color="text.secondary">
-                            Select city
-                          </Typography>
-                        );
-                      }
-                      return Array.isArray(selected)
-                        ? selected.join(', ')
-                        : String(selected);
-                    },
-                  }}
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      fontWeight: 600,
-                    },
-                    '& .MuiOutlinedInput-root': {
-                      height: 56,
-                      borderRadius: { xs: 3, md: 9999 },
-                      backgroundColor: 'background.default',
-                    },
-                  }}
-                >
-                  {cities.map((city) => (
-                    <MenuItem key={city} value={city}>
-                      {city}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  onInputChange={(_, newInput) =>
+                    setSearchParams({ ...searchParams, from: newInput })
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="From"
+                      variant="outlined"
+                      InputLabelProps={{ shrink: true }}
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LocationOn fontSize="small" color="primary" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        '& .MuiInputLabel-root': {
+                          fontWeight: 600,
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          height: 56,
+                          borderRadius: { xs: 3, md: 9999 },
+                          backgroundColor: 'background.default',
+                        },
+                      }}
+                      placeholder="Type city or section (e.g. Navinna)"
+                    />
+                  )}
+                />
               </Grid>
 
               <Grid
-                xs={12}
-                md={4}
+                size={{ xs: 12, md: 4 }}
                 sx={{
                   borderRight: { md: 1 },
                   borderColor: 'divider',
@@ -185,60 +197,50 @@ export default function Home() {
                   mt: { xs: 1.5, md: 0 },
                 }}
               >
-                <TextField
-                  select
+                <Autocomplete
                   fullWidth
-                  label="To"
+                  freeSolo
+                  loading={loadingStops}
+                  options={allStops}
                   value={searchParams.to}
-                  onChange={(e) =>
-                    setSearchParams({ ...searchParams, to: e.target.value })
+                  onChange={(_, newValue) =>
+                    setSearchParams({ ...searchParams, to: newValue || '' })
                   }
-                  variant="outlined"
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SwapHoriz fontSize="small" color="primary" />
-                      </InputAdornment>
-                    ),
-                  }}
-                  SelectProps={{
-                    displayEmpty: true,
-                    renderValue: (selected) => {
-                      if (!selected) {
-                        return (
-                          <Typography component="span" color="text.secondary">
-                            Select city
-                          </Typography>
-                        );
-                      }
-                      return Array.isArray(selected)
-                        ? selected.join(', ')
-                        : String(selected);
-                    },
-                  }}
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      fontWeight: 600,
-                    },
-                    '& .MuiOutlinedInput-root': {
-                      height: 56,
-                      borderRadius: { xs: 3, md: 9999 },
-                      backgroundColor: 'background.default',
-                    },
-                  }}
-                >
-                  {cities.map((city) => (
-                    <MenuItem key={city} value={city}>
-                      {city}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  onInputChange={(_, newInput) =>
+                    setSearchParams({ ...searchParams, to: newInput })
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="To"
+                      variant="outlined"
+                      InputLabelProps={{ shrink: true }}
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SwapHoriz fontSize="small" color="primary" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        '& .MuiInputLabel-root': {
+                          fontWeight: 600,
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          height: 56,
+                          borderRadius: { xs: 3, md: 9999 },
+                          backgroundColor: 'background.default',
+                        },
+                      }}
+                      placeholder="Type city or section (e.g. Town Hall)"
+                    />
+                  )}
+                />
               </Grid>
 
               <Grid
-                xs={12}
-                md={2}
+                size={{ xs: 12, md: 2 }}
                 sx={{
                   px: { md: 2.5 },
                   mt: { xs: 1.5, md: 0 },
@@ -275,8 +277,7 @@ export default function Home() {
               </Grid>
 
               <Grid
-                xs={12}
-                md={2}
+                size={{ xs: 12, md: 2 }}
                 sx={{
                   mt: { xs: 2, md: 0 },
                   pl: { md: 2.5 },
@@ -322,19 +323,19 @@ export default function Home() {
       <Box sx={{ backgroundColor: '#0f3554', py: 8 }}>
         <Container maxWidth="md">
           <Grid container spacing={4} sx={{ textAlign: 'center', color: 'white' }}>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Typography variant="h2" sx={{ fontWeight: 700, mb: 1 }}>
                 15,000+
               </Typography>
               <Typography variant="h6">Happy Customers</Typography>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Typography variant="h2" sx={{ fontWeight: 700, mb: 1 }}>
                 250+
               </Typography>
               <Typography variant="h6">Daily Routes</Typography>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Typography variant="h2" sx={{ fontWeight: 700, mb: 1 }}>
                 24/7
               </Typography>
@@ -351,7 +352,7 @@ export default function Home() {
             Why Choose RideWay?
           </Typography>
           <Grid container spacing={4} justifyContent="center">
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Paper sx={{ p: 4, height: '100%', textAlign: 'center', maxWidth: 420, mx: 'auto' }}>
                 <Typography variant="h5" sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
                   Easy Booking
@@ -361,7 +362,7 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Paper sx={{ p: 4, height: '100%', textAlign: 'center', maxWidth: 420, mx: 'auto' }}>
                 <Typography variant="h5" sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
                   Secure Payments
@@ -371,7 +372,7 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Paper sx={{ p: 4, height: '100%', textAlign: 'center', maxWidth: 420, mx: 'auto' }}>
                 <Typography variant="h5" sx={{ mb: 2, color: 'primary.main', fontWeight: 600 }}>
                   Reliable Service
@@ -395,7 +396,7 @@ export default function Home() {
             Plan Your Trip in 3 Steps
           </Typography>
           <Grid container spacing={4} justifyContent="center">
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Paper
                 sx={{
                   p: 4,
@@ -417,7 +418,7 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Paper
                 sx={{
                   p: 4,
@@ -439,7 +440,7 @@ export default function Home() {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Paper
                 sx={{
                   p: 4,
