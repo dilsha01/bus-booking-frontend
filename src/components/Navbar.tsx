@@ -5,6 +5,7 @@ import {
   Container,
   Button,
   Box,
+  Typography,
   IconButton,
   Drawer,
   List,
@@ -209,6 +210,20 @@ export default function Navbar() {
               }}
             >
               Login
+            </Button>
+            <Button
+              component={RouterLink}
+              to="/admin"
+              variant="text"
+              color="primary"
+              onClick={toggleMobile}
+              sx={{
+                fontSize: '0.9rem',
+                fontWeight: 500,
+                textTransform: 'none',
+              }}
+            >
+              Admin Login
             </Button>
             <Button
               component={RouterLink}
@@ -457,6 +472,22 @@ export default function Navbar() {
                     >
                       Sign Up
                     </Button>
+                    <Typography
+                      component={RouterLink}
+                      to="/admin"
+                      sx={{
+                        ml: 1.5,
+                        fontSize: '0.85rem',
+                        color: 'rgba(255,255,255,0.85)',
+                        textDecoration: 'underline',
+                        textUnderlineOffset: '3px',
+                        '&:hover': {
+                          color: 'white',
+                        },
+                      }}
+                    >
+                      Admin Login
+                    </Typography>
                   </>
                 )}
               </Box>
