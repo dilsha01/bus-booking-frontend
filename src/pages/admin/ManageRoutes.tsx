@@ -75,12 +75,6 @@ export default function ManageRoutes() {
         category: '',
       });
     }
-    setFormData({
-      routeNumber: route?.routeNumber || '',
-      origin: route?.origin || '',
-      destination: route?.destination || '',
-      stopsText: (route?.stops || []).join(', '),
-    });
     setDialogOpen(true);
   };
 
