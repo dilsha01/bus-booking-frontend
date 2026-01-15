@@ -174,7 +174,12 @@ export default function AdminDashboard() {
                 </TableCell>
                 <TableCell>
                   {booking.Trip?.departureTime
-                    ? new Date(booking.Trip.departureTime).toLocaleDateString()
+                    ? new Date(booking.Trip.departureTime).toLocaleDateString('en-LK', {
+                        timeZone: 'Asia/Colombo',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                      })
                     : 'N/A'}
                 </TableCell>
               </TableRow>
