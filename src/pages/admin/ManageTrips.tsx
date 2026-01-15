@@ -276,14 +276,14 @@ export default function ManageTrips() {
             <Grid item xs={12} md={6}>
               <TextField
                 select
-                label="Bus (category)"
+                label="Bus"
                 fullWidth
                 value={formData.busId}
                 onChange={(e) => setFormData({ ...formData, busId: e.target.value })}
               >
                 {buses.map((bus) => (
                   <MenuItem key={bus.id} value={bus.id}>
-                    {bus.name || bus.numberPlate} {bus.type ? `- ${bus.type}` : ''}
+                    {bus.numberPlate} {bus.type ? `(${bus.type})` : ''}
                   </MenuItem>
                 ))}
               </TextField>
