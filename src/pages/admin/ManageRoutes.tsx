@@ -19,6 +19,7 @@ import {
   CircularProgress,
   Grid,
   Chip,
+  MenuItem,
 } from '@mui/material';
 import { Add, Edit } from '@mui/icons-material';
 import { routeService } from '../../services/api';
@@ -234,12 +235,17 @@ export default function ManageRoutes() {
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 helperText="Optional: choose XL, AC, S or N"
+                SelectProps={{
+                  native: false,
+                }}
               >
-                <option value="" />
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
                 {['XL', 'AC', 'S', 'N'].map((type) => (
-                  <option key={type} value={type}>
+                  <MenuItem key={type} value={type}>
                     {type}
-                  </option>
+                  </MenuItem>
                 ))}
               </TextField>
             </Grid>
