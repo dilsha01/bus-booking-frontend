@@ -98,15 +98,7 @@ export default function ViewBookings() {
 
   const formatDateTime = (dateString?: string) => {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleString('en-LK', {
-      timeZone: 'Asia/Colombo',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
+    return new Date(dateString).toLocaleString();
   };
 
   if (loading) {

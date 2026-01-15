@@ -81,24 +81,10 @@ export default function ManageTrips() {
   const handleOpenDialog = (trip?: Trip) => {
     if (trip) {
       setEditingTrip(trip);
-      // Convert UTC date to local datetime-local format
-      const departureDate = new Date(trip.departureTime);
-      const arrivalDate = new Date(trip.arrivalTime);
-      
-      // Format as YYYY-MM-DDTHH:mm for datetime-local input
-      const formatForInput = (date: Date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        return `${year}-${month}-${day}T${hours}:${minutes}`;
-      };
-      
       setFormData({
         routeId: trip.routeId ? String(trip.routeId) : '',
-        departureTime: formatForInput(departureDate),
-        arrivalTime: formatForInput(arrivalDate),
+        departureTime: trip.departureTime.substring(0, 16),
+        arrivalTime: trip.arrivalTime.substring(0, 16),
         price: trip.price,
         busId: trip.busId.toString(),
       });
@@ -172,15 +158,7 @@ export default function ManageTrips() {
   };
 
   const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString('en-LK', {
-      timeZone: 'Asia/Colombo',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
+    return new Date(dateString).toLocaleString();
   };
 
   if (loading) {
